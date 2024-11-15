@@ -215,7 +215,7 @@ median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
 
 legend_text = alt.Chart(pd.DataFrame({'label': ['Median of Shootings per year']})).mark_text(
     align='center',
-    baseline='middle',
+    baseline='bottom',
     fontSize=14,
     font='Arial',
     color='red'
