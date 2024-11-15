@@ -213,14 +213,22 @@ median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     detail='Years:N' 
 )
 
-median_legend = alt.Chart(pd.DataFrame({'label': ['Median of shootings per year']}).assign(
-    color=['red'])).mark_point(filled=True, size=100).encode(
-    color='color:N',
-    shape='label:N'
-).properties(width=0, height=0)
+legend_text = alt.Chart(pd.DataFrame({'label': ['Median of Shootings per year']})).mark_text(
+    align='center',
+    baseline='middle',
+    fontSize=14,
+    font='Arial',
+    color='red'
+).encode(
+    x=alt.X('label:N', axis=None),
+    y=alt.Y('label:N', axis=None)
+).properties(
+    width=800,
+    height=50
+)
 
-# Combina el gráfico de tendencia y la línea de mediana
-final_chart = trend_chart + median_rule + median_legend
+# Combina el gráfico de tendencia, la línea de mediana y la leyenda
+final_chart = trend_chart + median_rule & legend_text
 
 ##Extra graphs
 #Poverty
