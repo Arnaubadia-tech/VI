@@ -313,7 +313,7 @@ final_plot = (scatter_plot + regression_line).properties(
     orient='bottom'
 )
 
-final_chart = (final_chart & legend_text).properties(
+final_chart = (final_chart ).properties(
     width=300,
     height=400,
     title=alt.TitleParams(
@@ -325,7 +325,7 @@ final_chart = (final_chart & legend_text).properties(
     titleFontSize=10,
     labelFontSize=8,
     orient='bottom'
-)
+)& legend_text
 
 final_plot2 = (scatter_plot2 + regression_line2).properties(
     width=300,
