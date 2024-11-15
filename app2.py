@@ -222,7 +222,7 @@ poverty = pd.merge(data, poverty[['State', 'PovertyRatesPercentOfPopulationBelow
 merged_poverty = pd.merge(poverty, state_aggregates, on='State')
 
 # Graph
-scatter_plot = alt.Chart(merged_poverty).mark_point(filled=True).encode(
+scatter_plot2 = alt.Chart(merged_poverty).mark_point(filled=True).encode(
     x=alt.X('PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', title='Poverty Rate (%)'),
     y=alt.Y('per_100k:Q', title='School Shootings per 100k'),
     tooltip=['State:N', 'PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', 'per_100k:Q'],
@@ -233,13 +233,13 @@ scatter_plot = alt.Chart(merged_poverty).mark_point(filled=True).encode(
     height=600
 )
 # Regression line
-regression_line = alt.Chart(merged_poverty).transform_regression(
+regression_line2 = alt.Chart(merged_poverty).transform_regression(
     'PovertyRatesPercentOfPopulationBelowPovertyLevel', 'per_100k'
 ).mark_line(color='red').encode(
     x='PovertyRatesPercentOfPopulationBelowPovertyLevel:Q',
     y='per_100k:Q'
 )
-final_plot2 = scatter_plot + regression_line
+final_plot2 = scatter_plot2 + regression_line2
 
 # Mental illness
 mental = pd.read_csv('mental_ill.csv')
@@ -250,7 +250,7 @@ mental = pd.merge(data, mental[['State', 'MentalHealthStatisticsRatesOfMentalIll
 merged_mental = pd.merge(mental, state_aggregates, on='State')
 
 # Crear el gráfico de dispersión
-scatter_plot = alt.Chart(merged_mental).mark_point(filled=True).encode(
+scatter_plot3 = alt.Chart(merged_mental).mark_point(filled=True).encode(
     x=alt.X('MentalHealthStatisticsRatesOfMentalIllness:Q', title='Mental Illness (%)'),
     y=alt.Y('per_100k:Q', title='Mass Shootings per 100k'),
     tooltip=['State:N', 'MentalHealthStatisticsRatesOfMentalIllness:Q', 'per_100k:Q'],
@@ -261,14 +261,14 @@ scatter_plot = alt.Chart(merged_mental).mark_point(filled=True).encode(
     height=600
 )
 # Regression line
-regression_line = alt.Chart(merged_mental).transform_regression(
+regression_line3 = alt.Chart(merged_mental).transform_regression(
     'MentalHealthStatisticsRatesOfMentalIllness', 'per_100k'
 ).mark_line(color='red').encode(
     x='MentalHealthStatisticsRatesOfMentalIllness:Q',
     y='per_100k:Q'
 )
 
-final_plot3 = scatter_plot + regression_line
+final_plot3 = scatter_plot3 + regression_line3
 
 #### kills and injured
 state_victims = data.groupby('State').agg(
@@ -405,7 +405,7 @@ final_chart = (trend_chart + median_rule).properties(
     orient='bottom'
 )
 
-final_plot2 = (scatter_plot + regression_line).properties(
+final_plot2 = (scatter_plot2 + regression_line2).properties(
     width=300,
     height=400,
     title=alt.TitleParams(
@@ -419,7 +419,7 @@ final_plot2 = (scatter_plot + regression_line).properties(
     orient='bottom'
 )
 
-final_plot3 = (scatter_plot + regression_line).properties(
+final_plot3 = (scatter_plot3 + regression_line3).properties(
     width=300,
     height=400,
     title=alt.TitleParams(
