@@ -159,7 +159,7 @@ median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     color=alt.value('red')
 )
 
-final_chart = trend_chart + median_rule)
+final_chart = trend_chart + median_rule
 
 ##Extra graphs
 #Poverty
