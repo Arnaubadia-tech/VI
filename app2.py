@@ -34,16 +34,7 @@ state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
     x=alt.X('per_100k:Q', title='Shootings per 100,000 Residents'),
     y=alt.Y('State:N', title='State', sort='-x'),  
     color=alt.Color('per_100k:Q', scale=alt.Scale(scheme='reds'), legend=alt.Legend(title='Shootings per 100k'))
-).properties(
-    title=alt.TitleParams(
-        text='Mass Shootings per Capita by State',
-        fontSize=16,
-        fontWeight='bold'
-    ),
-    width=600,   # Ancho del gráfico
-    height=700   # Altura del gráfico
 )
-
 
 state_bar_chart = alt.Chart(state_aggregates).mark_bar().encode(
     x=alt.X('State:N'),
