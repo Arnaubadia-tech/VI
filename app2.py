@@ -388,9 +388,7 @@ final_chart = (trend_chart + median_rule).properties(
     title=alt.TitleParams(
         text="Mass Shootings Timeline",
         fontSize=14,
-        fontWeight='bold'
-    )
-).configure_legend(
+        fontWeight='bold').configure_legend(
     title='Red line equals yearly median',
     titleFontSize=10,
     labelFontSize=8,
