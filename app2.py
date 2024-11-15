@@ -213,22 +213,33 @@ median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     detail='Years:N' 
 )
 
-legend_text = alt.Chart(pd.DataFrame({'label': ['Median of Shootings per year']})).mark_text(
-    align='center',
-    baseline='bottom',
-    fontSize=14,
-    font='Arial',
-    color='red'
-).encode(
-    x=alt.X('label:N', axis=None),
-    y=alt.Y('label:N', axis=None)
+trend_chart = alt.Chart(monthly_counts).mark_line().encode(
+    x=alt.X('Year_Month:T', title='Year-Month'),
+    y=alt.Y('count:Q', title='Number of Incidents'),
+    tooltip=['Year_Month:T', 'count:Q']
 ).properties(
+    title="Mass Shootings by Month and Year in the U.S.",
     width=800,
-    height=50
+    height=400
 )
 
-# Combina el gráfico de tendencia, la línea de mediana y la leyenda
-final_chart = trend_chart + median_rule & legend_text
+# Median yearly
+median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
+    x=alt.X('Year_Month:T'),
+    y=alt.Y('yearly_median:Q', title='Median Incidents per Month'),
+    detail='Years:N'
+)
+
+# Add a legend to the chart
+final_chart = (trend_chart + median_rule).properties(
+    title="Mass Shootings by Month and Year in the U.S.",
+    width=800,
+    height=400
+).configure_legend(
+    title='Median Incidents per Year',
+    labelFontSize=12,
+    orient='bottom-right'
+)
 
 ##Extra graphs
 #Poverty
