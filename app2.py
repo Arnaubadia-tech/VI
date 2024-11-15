@@ -132,13 +132,11 @@ color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
-    color=alt.Color('per_100k:Q', scale=color_scale, title='Tiroteos por 100k'),
-        alt.value('#F5F5F5')
-    #alt.condition(
-        #"datum.per_100k > 0",
-
-    ),
-    tooltip=['County Names:N', 'State:N', 'per_100k:Q']
+    color=alt.Color('per_100k:Q', 
+                    scale=color_scale, 
+                    title='Shootings per 100k',
+                    legend=alt.Legend(orient='bottom', titleFontSize=10, labelFontSize=8)),  # No usamos condición aquí
+    tooltip=['County Names:N', 'State:N', 'per_100k:Q']  # El tooltip siempre mostrará los valores
 ).transform_lookup(
     lookup='id',
     from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
