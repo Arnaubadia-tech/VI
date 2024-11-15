@@ -230,7 +230,6 @@ median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     detail='Years:N'
 )
 
-# Add a legend to the chart
 final_chart = (trend_chart + median_rule).properties(
     title="Mass Shootings by Month and Year in the U.S.",
     width=800,
