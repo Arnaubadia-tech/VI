@@ -209,11 +209,18 @@ trend_chart = alt.Chart(monthly_counts).mark_line().encode(
 #median yearly 
 median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     x=alt.X('Year_Month:T'),
-    y=alt.Y('yearly_median:Q', title='Median Incidents per Month'),
+    y=alt.Y('yearly_median:Q'),
     detail='Years:N' 
 )
 
-final_chart = trend_chart + median_rule
+median_legend = alt.Chart(pd.DataFrame({'label': ['Median of shootings per year']}).assign(
+    color=['red'])).mark_point(filled=True, size=100).encode(
+    color='color:N',
+    shape='label:N'
+).properties(width=0, height=0)
+
+# Combina el gráfico de tendencia y la línea de mediana
+final_chart = trend_chart + median_rule + median_legend
 
 ##Extra graphs
 #Poverty
