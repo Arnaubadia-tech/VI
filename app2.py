@@ -196,7 +196,8 @@ monthly_counts = monthly_counts.merge(
     right_on='Years',
     how='left'
 )
-# Monthly
+
+## grafic
 trend_chart = alt.Chart(monthly_counts).mark_line().encode(
     x=alt.X('Year_Month:T', title='Year-Month'),
     y=alt.Y('count:Q', title='Number of Incidents'),
@@ -206,38 +207,29 @@ trend_chart = alt.Chart(monthly_counts).mark_line().encode(
     width=800,
     height=400
 )
-#median yearly 
+
+# Añadimos la mediana anual
 median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     x=alt.X('Year_Month:T'),
     y=alt.Y('yearly_median:Q'),
     detail='Years:N' 
 )
 
-trend_chart = alt.Chart(monthly_counts).mark_line().encode(
-    x=alt.X('Year_Month:T', title='Year-Month'),
-    y=alt.Y('count:Q', title='Number of Incidents'),
-    tooltip=['Year_Month:T', 'count:Q']
-).properties(
-    title="Mass Shootings by Month and Year in the U.S.",
-    width=800,
-    height=400
+# Añadimos la leyenda explicativa para la línea roja
+median_legend = alt.Chart().mark_text(
+    align='left',
+    baseline='middle',
+    dx=5,
+    color='red'
+).encode(
+    x=alt.value(10),  # Ubicación horizontal del texto
+    y=alt.value(10),  # Ubicación vertical del texto
+    text=alt.value('Mediana de incidentes anuales (línea roja)')
 )
 
-# Median yearly
-median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
-    x=alt.X('Year_Month:T'),
-    y=alt.Y('yearly_median:Q', title='Median Incidents per Month'),
-    detail='Years:N'
-)
-
-final_chart = (trend_chart + median_rule).properties(
-    title="Mass Shootings by Month and Year in the U.S.",
-    width=800,
-    height=400
-).configure_legend(
-    title='Median Incidents per Year',
-    labelFontSize=12,
-    orient='bottom-right'
+# Combinamos todo en un solo gráfico
+final_chart = (trend_chart + median_rule + median_legend).resolve_scale(
+    color='independent'
 )
 
 ##Extra graphs
