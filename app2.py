@@ -148,10 +148,6 @@ trend_chart = alt.Chart(monthly_counts).mark_line().encode(
     x=alt.X('Year_Month:T', title='Year-Month'),
     y=alt.Y('count:Q', title='Number of Incidents'),
     tooltip=['Year_Month:T', 'count:Q']
-).properties(
-    title="Mass Shootings by Month and Year in the U.S.",
-    width=800,
-    height=400
 )
 #median yearly 
 median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
@@ -179,10 +175,6 @@ scatter_plot2 = alt.Chart(merged_poverty).mark_point(filled=True).encode(
     y=alt.Y('per_100k:Q', title='School Shootings per 100k'),
     tooltip=['State:N', 'PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', 'per_100k:Q'],
     size='population:Q'  # Tamaño opcional basado en la población
-).properties(
-    title="Poverty Rate vs. Mass Shootings per 100,000 Residents by State",
-    width=800,
-    height=600
 )
 # Regression line
 regression_line2 = alt.Chart(merged_poverty).transform_regression(
@@ -208,10 +200,6 @@ scatter_plot3 = alt.Chart(merged_mental).mark_point(filled=True).encode(
     y=alt.Y('per_100k:Q', title='Mass Shootings per 100k'),
     tooltip=['State:N', 'MentalHealthStatisticsRatesOfMentalIllness:Q', 'per_100k:Q'],
     size='population:Q'  # Tamaño opcional basado en la población
-).properties(
-    title="Mental Illness Rate vs. Mass Shootings per 100,000 Residents by State",
-    width=800,
-    height=600
 )
 # Regression line
 regression_line3 = alt.Chart(merged_mental).transform_regression(
