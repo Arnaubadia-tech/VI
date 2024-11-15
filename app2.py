@@ -6,7 +6,7 @@ from vega_datasets import data as vega_data
 st.set_page_config(
     page_title="VI Project", 
     layout="wide",
-    initial_sidebar_state="auto"  
+    initial_sidebar_state="expanded"  
 )
 
 # Cargar datos
@@ -33,10 +33,25 @@ state_aggregates['per_100k'] = (state_aggregates['shooting_count'] / state_aggre
 state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
     x=alt.X('per_100k:Q', title='Shootings per 100,000 Residents'),
     y=alt.Y('State:N', title='State', sort='-x'),  
-    color=alt.Color('per_100k:Q', scale=alt.Scale(scheme='reds'), legend=alt.Legend(title='Shootings per 100k')))
+    color=alt.Color('per_100k:Q', scale=alt.Scale(scheme='reds'), legend=alt.Legend(title='Shootings per 100k'))
+).properties(
+    title=alt.TitleParams(
+        text='Mass Shootings per Capita by State',
+        fontSize=16,
+        fontWeight='bold'
+    ),
+    width=600,   # Ancho del gráfico
+    height=700   # Altura del gráfico
+)
 
+
+state_bar_chart = alt.Chart(state_aggregates).mark_bar().encode(
+    x=alt.X('State:N'),
+    y=alt.Y('per_100k:Q', title='Shootings per 100,000 Residents')
+)
 
 # Mapa coroplético por estado
+#vega_data.us_10m.url = https://raw.githubusercontent.com/vega/vega-datasets/master/data/us-10m.json
 states = alt.topo_feature(vega_data.us_10m.url, 'states')
 state_fips = pd.DataFrame({
     'State': ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'District of Columbia',
@@ -53,6 +68,8 @@ state_aggregates = state_aggregates.merge(state_fips, on='State', how='left')
 
 color_scale = alt.Scale(scheme="reds", domain=[0, state_aggregates['per_100k'].max()], clamp=True)
 
+color_scale = alt.Scale(scheme="reds", domain=[0, state_aggregates['per_100k'].max()], clamp=True)
+
 ## Gráfico choropleth para todos los Estados Unidos
 choropleth = alt.Chart(states).mark_geoshape().encode(
     color=alt.Color('per_100k:Q', title='Shootings per 100k', scale=color_scale),
@@ -60,11 +77,33 @@ choropleth = alt.Chart(states).mark_geoshape().encode(
 ).transform_lookup(
     lookup='id',
     from_=alt.LookupData(state_aggregates, 'id', ['State', 'per_100k'])
+).properties(
+    width=800,
+    height=500,
+    title="Mass Shootings per 100,000 Residents by State in the US"
 ).project(
     type='albersUsa'
 )
 
-## Counties preprocessing
+# zoom district of columbia
+zoom = alt.Chart(states).mark_geoshape().encode(
+    color=alt.Color('per_100k:Q', title='Shootings per 100k', scale=color_scale),
+    tooltip=['State:N', 'per_100k:Q']
+).transform_lookup(
+    lookup='id',
+    from_=alt.LookupData(state_aggregates, 'id', ['State', 'per_100k'])
+).properties(
+    width=800,
+    height=500,
+    title="Zoom on District of Columbia of Mass Shootings per 100,000 Residents by State in the US"
+).project(
+    type='albersUsa',
+    scale=4000,            # Aumentar el valor para hacer zoom
+    translate=[-700, 300]  # Ajustar
+)
+
+
+# Counties preprocessing
 county_aggregates = data.groupby(['FIPS', 'County Names', 'State']).agg(
     shooting_count=('id', 'count'),            # Cuenta de tiroteos en cada condado
     population=('POPESTIMATE2023', 'first')    # Población estimada en 2023, seleccionando el primer valor
@@ -84,6 +123,11 @@ complete_data = counties_full.merge(county_aggregates, on='FIPS', how='left').fi
 
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
+
+
+## Gráfico distribución por county
+color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
+
 # County geometry
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 
@@ -97,11 +141,17 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
 ).transform_lookup(
     lookup='id',
     from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
+).properties(
+    width=800,
+    height=500,
+    title="Mass Shootings per 100,000 Residents by County in the US"
 ).project(
     type='albersUsa'
 )
 
-## Gráfico de dispersión de incidentes escolares y tiroteos
+
+
+# Gráfico de dispersión de incidentes escolares y tiroteos
 state_aggregates_incidents = school_df.groupby('State').agg(
     incident_count=('Incident ID', 'count'),
     population=('State Population', 'first')
@@ -145,7 +195,12 @@ monthly_counts = monthly_counts.merge(
 trend_chart = alt.Chart(monthly_counts).mark_line().encode(
     x=alt.X('Year_Month:T', title='Year-Month'),
     y=alt.Y('count:Q', title='Number of Incidents'),
-    tooltip=['Year_Month:T', 'count:Q'])
+    tooltip=['Year_Month:T', 'count:Q']
+).properties(
+    title="Mass Shootings by Month and Year in the U.S.",
+    width=800,
+    height=400
+)
 #median yearly 
 median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     x=alt.X('Year_Month:T'),
@@ -171,7 +226,12 @@ scatter_plot2 = alt.Chart(merged_poverty).mark_point(filled=True).encode(
                                     merged_poverty['PovertyRatesPercentOfPopulationBelowPovertyLevel'].max()])),
     y=alt.Y('per_100k:Q', title='School Shootings per 100k'),
     tooltip=['State:N', 'PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', 'per_100k:Q'],
-    size='population:Q')
+    size='population:Q'  # Tamaño opcional basado en la población
+).properties(
+    title="Poverty Rate vs. Mass Shootings per 100,000 Residents by State",
+    width=800,
+    height=600
+)
 # Regression line
 regression_line2 = alt.Chart(merged_poverty).transform_regression(
     'PovertyRatesPercentOfPopulationBelowPovertyLevel', 'per_100k'
@@ -195,7 +255,12 @@ scatter_plot3 = alt.Chart(merged_mental).mark_point(filled=True).encode(
                                     merged_mental['MentalHealthStatisticsRatesOfMentalIllness'].max()])),
     y=alt.Y('per_100k:Q', title='Mass Shootings per 100k'),
     tooltip=['State:N', 'MentalHealthStatisticsRatesOfMentalIllness:Q', 'per_100k:Q'],
-    size='population:Q')
+    size='population:Q'  # Tamaño opcional basado en la población
+).properties(
+    title="Mental Illness Rate vs. Mass Shootings per 100,000 Residents by State",
+    width=800,
+    height=600
+)
 # Regression line
 regression_line3 = alt.Chart(merged_mental).transform_regression(
     'MentalHealthStatisticsRatesOfMentalIllness', 'per_100k'
@@ -206,6 +271,43 @@ regression_line3 = alt.Chart(merged_mental).transform_regression(
 
 final_plot3 = scatter_plot3 + regression_line3
 
+#### kills and injured
+state_victims = data.groupby('State').agg(
+    victims_killed=('Victims Killed', 'sum'),
+    victims_injured=('Victims Injured', 'sum')
+).reset_index()
+
+# Proportions
+state_victims['total_victims'] = state_victims['victims_killed'] + state_victims['victims_injured']
+state_victims['proportion_killed'] = state_victims['victims_killed'] / state_victims['total_victims']
+state_victims['proportion_injured'] = state_victims['victims_injured'] / state_victims['total_victims']
+# Transform
+stacked_data = state_victims.melt(
+    id_vars=['State'],
+    value_vars=['proportion_killed', 'proportion_injured'],
+    var_name='Category',
+    value_name='Proportion'
+)
+
+# Rename
+stacked_data['Category'] = stacked_data['Category'].replace({
+    'proportion_killed': 'Killed',
+    'proportion_injured': 'Injured'
+})
+
+# Crear el gráfico apilado
+stacked_chart = alt.Chart(stacked_data).mark_bar(opacity=0.9).encode(
+    x=alt.X('State:N', title='State', sort='-y'),
+    y=alt.Y('Proportion:Q', title='Proportion', stack='normalize'),
+    color=alt.Color('Category:N', 
+                    scale=alt.Scale(domain=['Killed', 'Injured'], range=['#B61818', '#6789E3']),
+                    title='Category'),
+    tooltip=['State:N', 'Category:N', alt.Tooltip('Proportion:Q', format='.2%')]
+).properties(
+    title="Proportion of Victims Killed vs Injured by State",
+    width=800,
+    height=500
+)
 
 state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
     x=alt.X('per_100k:Q', title='Shootings per 100,000 Residents'),
@@ -335,9 +437,9 @@ final_plot3 = (scatter_plot3 + regression_line3).properties(
     orient='bottom'
 )
 
-
 # Display layout
 st.markdown("<h1 style='text-align: center;'>Mass Shootings in the US</h1>", unsafe_allow_html=True)
+
 
 col1, col2, col3 = st.columns(3)
 
