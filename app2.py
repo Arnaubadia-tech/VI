@@ -105,51 +105,51 @@ zoom = alt.Chart(states).mark_geoshape().encode(
 
 # Counties preprocessing
 county_aggregates = data.groupby(['FIPS', 'County Names', 'State']).agg(
-    shooting_count=('id', 'count'),            # Cuenta de tiroteos en cada condado
-    population=('POPESTIMATE2023', 'first')    # Población estimada en 2023, seleccionando el primer valor
+    shooting_count=('id', 'count'),            # Cuenta de tiroteos en cada condado
+    population=('POPESTIMATE2023', 'first')    # Población estimada en 2023, seleccionando el primer valor
 ).reset_index()
 
-county_aggregates['Shootings_Density'] = (county_aggregates['shooting_count'] / county_aggregates['population']) * 100000
+county_aggregates['per_100k'] = (county_aggregates['shooting_count'] / county_aggregates['population']) * 100000
 
-counties_df.rename(columns={'fips': 'FIPS'}, inplace=True)
-
-counties_geometries = vega_data.us_10m()['objects']['counties']['geometries']
-
-# Crear un DataFrame con FIPS y el nombre del condado (si está disponible en las propiedades)
 counties_full = pd.DataFrame({
-    'FIPS': [int(f['id']) for f in counties_geometries],
+    'FIPS': [int(f['id']) for f in vega_data.us_10m()['objects']['counties']['geometries']]
 })
-print(counties_df.columns)
-print(counties_full.columns)
-counties_full = pd.merge(counties_full, counties_df[['FIPS', 'county_name','state_name']], on='FIPS', how='left')
 
 complete_data = counties_full.merge(county_aggregates, on='FIPS', how='left').fillna({
-    'shooting_count': 0,
-    'population': 1,  # Set to 1 to avoid division by zero
-    'Shootings_Density': 0     # Set to 0 for counties with no shootings
+    'shooting_count': 0,      # Establece en 0 si no hay tiroteos reportados
+    'population': 1,          # Establece en 1 para evitar divisiones por cero
+    'per_100k': 0             # Establece en 0 para los condados sin tiroteos
 })
 
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
+color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
 
-color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['Shootings_Density'].max()], clamp=True)
+
+## Gráfico distribución por county
+color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
+
+# County geometry
+counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
-    color=alt.condition(
-        "datum.Shootings_Density > 0",
-        alt.Color('Shootings_Density:Q', scale=color_scale, title='Shootings per 100k'),
-        alt.value('#F5F5F5')  # Grey for zero shootings
-    ),
-    tooltip=['county_name:N', 'state_name:N', 'Shootings_Density:Q']
+    color=alt.condition(
+        "datum.per_100k > 0",
+        alt.Color('per_100k:Q', scale=color_scale, title='Shootings per 100k'),
+        alt.value('#F5F5F5')  # Grey color
+    ),
+    tooltip=['County Names:N', 'State:N', 'per_100k:Q']
 ).transform_lookup(
-    lookup='id',
-    from_=alt.LookupData(complete_data, 'FIPS', ['county_name', 'state_name', 'Shootings_Density'])
+    lookup='id',
+    from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
 ).properties(
-    width=800,
-    height=500,
-    title="Mass Shootings per 100,000 Residents by County in the US"
+    width=800,
+    height=500,
+    title="Mass Shootings per 100,000 Residents by County in the US"
 ).project(
-    type='albersUsa'
+    type='albersUsa'
 )
+
+
 
 # Gráfico de dispersión de incidentes escolares y tiroteos
 state_aggregates_incidents = school_df.groupby('State').agg(
