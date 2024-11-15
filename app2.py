@@ -156,7 +156,23 @@ median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     detail='Years:N' 
 )
 
-final_chart = trend_chart + median_rule
+legend_chart = alt.Chart(pd.DataFrame({
+    'Legend': ['Monthly Count', 'Yearly Median'],
+    'color': ['blue', 'red']
+})).mark_point().encode(
+    y=alt.Y('Legend:N', axis=None),
+    color=alt.Color('color:N', 
+                   scale=alt.Scale(domain=['blue', 'red'], 
+                                 range=['blue', 'red']),
+                   legend=alt.Legend(
+                       title=None,
+                       orient='bottom',
+                       titleFontSize=10,
+                       labelFontSize=8
+                   ))
+)
+
+final_chart = trend_chart + median_rule + legend_chart
 
 ##Extra graphs
 #Poverty
@@ -307,7 +323,6 @@ final_chart = (trend_chart + median_rule).properties(
         fontWeight='bold'
     )
 ).configure_legend(
-    title='red equals median',
     titleFontSize=10,
     labelFontSize=8,
     orient='bottom'
