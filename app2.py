@@ -404,10 +404,12 @@ final_chart = (trend_chart + median_rule).properties(
         fontWeight='bold'
     )
 ).configure_legend(
+    title='Red line equals yearly median',
     titleFontSize=10,
     labelFontSize=8,
     orient='bottom'
 )
+
 
 final_plot2 = (scatter_plot2 + regression_line2).properties(
     width=300,
