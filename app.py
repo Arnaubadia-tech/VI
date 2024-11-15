@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
-from vega_datasets import data as vega_data
+#from vega_datasets import data as vega_data
 
 # Cargar datos
 data = pd.read_csv('VIProjectMassShoting-csv2.csv')
@@ -45,6 +45,7 @@ state_bar_chart = alt.Chart(state_aggregates).mark_bar().encode(
 )
 
 # Mapa coroplético por estado
+vega_data.us_10m.url = https://raw.githubusercontent.com/vega/vega-datasets/master/data/us-10m.json
 states = alt.topo_feature(vega_data.us_10m.url, 'states')
 state_fips = pd.DataFrame({
     'State': ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'District of Columbia',
