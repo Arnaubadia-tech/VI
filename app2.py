@@ -308,98 +308,160 @@ stacked_chart = alt.Chart(stacked_data).mark_bar(opacity=0.9).encode(
     height=500
 )
 
-state_bar_chart2 = state_bar_chart2.properties(
+state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
+    x=alt.X('per_100k:Q', title='Shootings per 100,000 Residents'),
+    y=alt.Y('State:N', title='State', sort='-x'),  
+    color=alt.Color('per_100k:Q', 
+                   scale=alt.Scale(scheme='reds'), 
+                   legend=alt.Legend(title='Shootings per 100k', 
+                                   orient='bottom',
+                                   titleFontSize=10,
+                                   labelFontSize=8))
+).properties(
+    title=alt.TitleParams(
+        text='Mass Shootings per Capita by State',
+        fontSize=14,
+        fontWeight='bold'
+    ),
     width=300,
     height=400
 )
 
-choropleth = choropleth.properties(
+choropleth = alt.Chart(states).mark_geoshape().encode(
+    color=alt.Color('per_100k:Q', 
+                   title='Shootings per 100k', 
+                   scale=color_scale,
+                   legend=alt.Legend(orient='bottom',
+                                   titleFontSize=10,
+                                   labelFontSize=8)),
+    tooltip=['State:N', 'per_100k:Q']
+).transform_lookup(
+    lookup='id',
+    from_=alt.LookupData(state_aggregates, 'id', ['State', 'per_100k'])
+).properties(
     width=300,
-    height=200
+    height=400,
+    title=alt.TitleParams(
+        text="Mass Shootings Distribution by State",
+        fontSize=14,
+        fontWeight='bold'
+    )
+).project(
+    type='albersUsa'
 )
 
-zoom = zoom.properties(
+county_choropleth = alt.Chart(counties).mark_geoshape().encode(
+    color=alt.condition(
+        "datum.per_100k > 0",
+        alt.Color('per_100k:Q', 
+                 scale=color_scale, 
+                 title='Shootings per 100k',
+                 legend=alt.Legend(orient='bottom',
+                                 titleFontSize=10,
+                                 labelFontSize=8)),
+        alt.value('#F5F5F5')
+    ),
+    tooltip=['County Names:N', 'State:N', 'per_100k:Q']
+).transform_lookup(
+    lookup='id',
+    from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
+).properties(
     width=300,
-    height=200
+    height=400,
+    title=alt.TitleParams(
+        text="Mass Shootings by County",
+        fontSize=14,
+        fontWeight='bold'
+    )
+).project(
+    type='albersUsa'
 )
 
-county_choropleth = county_choropleth.properties(
+final_plot = (scatter_plot + regression_line).properties(
     width=300,
-    height=400
+    height=400,
+    title=alt.TitleParams(
+        text="School Incidents vs Mass Shootings",
+        fontSize=14,
+        fontWeight='bold'
+    )
+).configure_legend(
+    titleFontSize=10,
+    labelFontSize=8,
+    orient='bottom'
 )
 
-final_plot = final_plot.properties(
+final_chart = (trend_chart + median_rule).properties(
     width=300,
-    height=400
+    height=400,
+    title=alt.TitleParams(
+        text="Mass Shootings Timeline",
+        fontSize=14,
+        fontWeight='bold'
+    )
+).configure_legend(
+    titleFontSize=10,
+    labelFontSize=8,
+    orient='bottom'
 )
 
-final_chart = final_chart.properties(
-    width=250,
-    height=400
+final_plot2 = (scatter_plot + regression_line).properties(
+    width=300,
+    height=400,
+    title=alt.TitleParams(
+        text="Poverty Rate vs Mass Shootings",
+        fontSize=14,
+        fontWeight='bold'
+    )
+).configure_legend(
+    titleFontSize=10,
+    labelFontSize=8,
+    orient='bottom'
 )
 
-final_plot2 = final_plot2.properties(
-    width=250,
-    height=400
+final_plot3 = (scatter_plot + regression_line).properties(
+    width=300,
+    height=400,
+    title=alt.TitleParams(
+        text="Mental Health vs Mass Shootings",
+        fontSize=14,
+        fontWeight='bold'
+    )
+).configure_legend(
+    titleFontSize=10,
+    labelFontSize=8,
+    orient='bottom'
 )
 
-final_plot3 = final_plot3.properties(
-    width=250,
-    height=400
-)
-
-stacked_chart = stacked_chart.properties(
-    width=250,
-    height=400
-)
-
-
+# Display layout
 st.markdown("<h1 style='text-align: center;'>Mass Shootings in the US</h1>", unsafe_allow_html=True)
 
 # First row - 4 graphs
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.markdown("<h3 style='text-align: center;'>Mass shootings per capita</h3>", unsafe_allow_html=True)
     st.altair_chart(state_bar_chart2, use_container_width=True)
 
 with col2:
-    st.markdown("<h3 style='text-align: center;'>Distribution by State</h3>", unsafe_allow_html=True)
     st.altair_chart(choropleth, use_container_width=True)
-    st.markdown("<h4 style='text-align: center;'>DC Zoom</h4>", unsafe_allow_html=True)
-    st.altair_chart(zoom, use_container_width=True)
 
 with col3:
-    st.markdown("<h3 style='text-align: center;'>Distribution by County</h3>", unsafe_allow_html=True)
     st.altair_chart(county_choropleth, use_container_width=True)
 
 with col4:
-    st.markdown("<h3 style='text-align: center;'>Shootings Correlation</h3>", unsafe_allow_html=True)
     st.altair_chart(final_plot, use_container_width=True)
 
 # Add space between rows
 st.markdown("<div style='padding-top: 30px;'></div>", unsafe_allow_html=True)
 
-# Second row - 5 graphs
-st.markdown("<h2 style='text-align: center;'>Additional Insights</h2>", unsafe_allow_html=True)
-col5, col6, col7, col8, col9 = st.columns(5)
+# Second row - 3 graphs
+col5, col6, col7 = st.columns(3)
 
 with col5:
-    st.markdown("<h3 style='text-align: center;'>Evolution Timeline</h3>", unsafe_allow_html=True)
     st.altair_chart(final_chart, use_container_width=True)
 
 with col6:
-    st.markdown("<h3 style='text-align: center;'>Poverty Correlation</h3>", unsafe_allow_html=True)
     st.altair_chart(final_plot2, use_container_width=True)
 
 with col7:
-    st.markdown("<h3 style='text-align: center;'>Mental Health Correlation</h3>", unsafe_allow_html=True)
     st.altair_chart(final_plot3, use_container_width=True)
-
-with col8:
-    st.markdown("<h3 style='text-align: center;'>Victims Analysis</h3>", unsafe_allow_html=True)
-    st.altair_chart(stacked_chart, use_container_width=True)
-
-with col9:
-    # You can add another visualization here if needed
-    st.markdown("<h3 style='text-align: center;'>Additional Metric</h3>", unsafe_allow_html=True)
