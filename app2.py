@@ -133,7 +133,7 @@ counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
     color=alt.condition(
-        "datum.per_100k > 0",
+        #"datum.per_100k > 0",
         alt.Color('per_100k:Q', scale=color_scale, title='Tiroteos por 100k'),
         alt.value('#F5F5F5')
     ),
