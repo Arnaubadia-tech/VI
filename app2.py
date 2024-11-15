@@ -313,7 +313,7 @@ final_plot = (scatter_plot + regression_line).properties(
     orient='bottom'
 )
 
-final_chart = (trend_chart + median_rule + legend_text).properties(
+final_chart = (final_chart & legend_text).properties(
     width=300,
     height=400,
     title=alt.TitleParams(
