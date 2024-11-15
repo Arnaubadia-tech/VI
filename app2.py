@@ -144,31 +144,22 @@ monthly_counts = monthly_counts.merge(
     how='left'
 )
 # Monthly
-trend_chart = alt.Chart(monthly_counts).mark_line().encode(
+trend_chart = alt.Chart(monthly_counts).mark_line(color='blue').encode(
     x=alt.X('Year_Month:T', title='Year-Month'),
     y=alt.Y('count:Q', title='Number of Incidents'),
-    tooltip=['Year_Month:T', 'count:Q']
+    tooltip=['Year_Month:T', 'count:Q'],
+    color=alt.value('blue')
+).properties(
+    title="Mass Shootings by Month and Year in the U.S."
 )
 
 median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     x=alt.X('Year_Month:T'),
     y=alt.Y('yearly_median:Q'),
-    color=alt.value('red'),
-    tooltip=['yearly_median:Q']
-).properties(
-    title="Mass Shootings by Month and Year in the U.S."
+    color=alt.value('red')
 )
 
-final_chart = (trend_chart + median_rule).encode(
-    color=alt.Color(
-        'Legend:N',
-        scale=alt.Scale(domain=['Yearly Median'], range=['red']),
-        legend=alt.Legend(
-            title=None,
-            orient='bottom'
-        )
-    )
-)
+final_chart = trend_chart + median_rule)
 
 ##Extra graphs
 #Poverty
