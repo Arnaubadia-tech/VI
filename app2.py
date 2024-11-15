@@ -222,36 +222,43 @@ poverty = pd.merge(data, poverty[['State', 'PovertyRatesPercentOfPopulationBelow
 merged_poverty = pd.merge(poverty, state_aggregates, on='State')
 
 # Graph
+# Obtener el valor mínimo y máximo para la escala del eje x en scatter_plot2 (Poverty Rate)
+min_x2 = merged_poverty['PovertyRatesPercentOfPopulationBelowPovertyLevel'].min()
+max_x2 = merged_poverty['PovertyRatesPercentOfPopulationBelowPovertyLevel'].max()
+
+# Obtener el valor mínimo y máximo para la escala del eje x en scatter_plot3 (Mental Health Rate)
+min_x3 = merged_mental['MentalHealthStatisticsRatesOfMentalIllness'].min()
+max_x3 = merged_mental['MentalHealthStatisticsRatesOfMentalIllness'].max()
+
+# Crear el gráfico de dispersión para el Poverty Rate
 scatter_plot2 = alt.Chart(merged_poverty).mark_point(filled=True).encode(
-    x=alt.X('PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', title='Poverty Rate (%)'),
-    y=alt.Y('per_100k:Q', title='School Shootings per 100k'),
+    x=alt.X('PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', 
+            title='Poverty Rate (%)',
+            scale=alt.Scale(domain=[min_x2, max_x2])),  # Aplicar escala proporcional al eje x
+    y=alt.Y('per_100k:Q', title='Mass Shootings per 100k'),
     tooltip=['State:N', 'PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', 'per_100k:Q'],
-    size='population:Q'  # Tamaño opcional basado en la población
+    size='population:Q'
 ).properties(
     title="Poverty Rate vs. Mass Shootings per 100,000 Residents by State",
     width=800,
     height=600
 )
-# Regression line
+
+# Regression line para scatter_plot2
 regression_line2 = alt.Chart(merged_poverty).transform_regression(
     'PovertyRatesPercentOfPopulationBelowPovertyLevel', 'per_100k'
 ).mark_line(color='red').encode(
     x='PovertyRatesPercentOfPopulationBelowPovertyLevel:Q',
     y='per_100k:Q'
 )
+
 final_plot2 = scatter_plot2 + regression_line2
 
-# Mental illness
-mental = pd.read_csv('mental_ill.csv')
-mental = mental.rename(columns={'state': 'State'})
-# Fusionar los datos de enfermedades mentales con el dataset principal `data`
-mental = pd.merge(data, mental[['State', 'MentalHealthStatisticsRatesOfMentalIllness']], on='State', how='left')
-# Add state aggregate
-merged_mental = pd.merge(mental, state_aggregates, on='State')
-
-# Crear el gráfico de dispersión
+# Crear el gráfico de dispersión para el Mental Health Rate
 scatter_plot3 = alt.Chart(merged_mental).mark_point(filled=True).encode(
-    x=alt.X('MentalHealthStatisticsRatesOfMentalIllness:Q', title='Mental Illness (%)'),
+    x=alt.X('MentalHealthStatisticsRatesOfMentalIllness:Q', 
+            title='Mental Illness (%)',
+            scale=alt.Scale(domain=[min_x3, max_x3])),  # Aplicar escala proporcional al eje x
     y=alt.Y('per_100k:Q', title='Mass Shootings per 100k'),
     tooltip=['State:N', 'MentalHealthStatisticsRatesOfMentalIllness:Q', 'per_100k:Q'],
     size='population:Q'  # Tamaño opcional basado en la población
@@ -260,7 +267,8 @@ scatter_plot3 = alt.Chart(merged_mental).mark_point(filled=True).encode(
     width=800,
     height=600
 )
-# Regression line
+
+# Regression line para scatter_plot3
 regression_line3 = alt.Chart(merged_mental).transform_regression(
     'MentalHealthStatisticsRatesOfMentalIllness', 'per_100k'
 ).mark_line(color='red').encode(
