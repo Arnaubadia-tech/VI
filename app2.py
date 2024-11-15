@@ -205,6 +205,10 @@ trend_chart = alt.Chart(monthly_counts).mark_line().encode(
 median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     x=alt.X('Year_Month:T'),
     y=alt.Y('yearly_median:Q'),
+    legend=alt.Legend(title='Red line is yearly median',
+                      orient='bottom',
+                      labelFontSize=12,
+                      titleFontSize=14),
     detail='Years:N' 
 )
 
