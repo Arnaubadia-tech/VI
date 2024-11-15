@@ -149,30 +149,26 @@ trend_chart = alt.Chart(monthly_counts).mark_line().encode(
     y=alt.Y('count:Q', title='Number of Incidents'),
     tooltip=['Year_Month:T', 'count:Q']
 )
-#median yearly 
+
 median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     x=alt.X('Year_Month:T'),
     y=alt.Y('yearly_median:Q'),
-    detail='Years:N' 
+    color=alt.value('red'),
+    tooltip=['yearly_median:Q']
+).properties(
+    title="Mass Shootings by Month and Year in the U.S."
 )
 
-legend_chart = alt.Chart(pd.DataFrame({
-    'Legend': ['Monthly Count', 'Yearly Median'],
-    'color': ['blue', 'red']
-})).mark_point().encode(
-    y=alt.Y('Legend:N', axis=None),
-    color=alt.Color('color:N', 
-                   scale=alt.Scale(domain=['blue', 'red'], 
-                                 range=['blue', 'red']),
-                   legend=alt.Legend(
-                       title=None,
-                       orient='bottom',
-                       titleFontSize=10,
-                       labelFontSize=8
-                   ))
+final_chart = (trend_chart + median_rule).encode(
+    color=alt.Color(
+        'Legend:N',
+        scale=alt.Scale(domain=['Yearly Median'], range=['red']),
+        legend=alt.Legend(
+            title=None,
+            orient='bottom'
+        )
+    )
 )
-
-final_chart = trend_chart + median_rule + legend_chart
 
 ##Extra graphs
 #Poverty
@@ -314,7 +310,7 @@ final_plot = (scatter_plot + regression_line).properties(
     orient='bottom'
 )
 
-final_chart = (trend_chart + median_rule + legend_chart).properties(
+final_chart = (trend_chart + median_rule).properties(
     width=300,
     height=400,
     title=alt.TitleParams(
