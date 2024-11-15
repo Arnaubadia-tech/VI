@@ -316,7 +316,10 @@ state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
                    legend=alt.Legend(title='Shootings per 100k', 
                                    orient='bottom',
                                    titleFontSize=10,
-                                   labelFontSize=8))
+                                   labelFontSize=8,
+    legendX=0,
+    direction='horizontal',
+    padding=5))
 ).properties(
     title=alt.TitleParams(
         text='Mass Shootings per Capita by State',
