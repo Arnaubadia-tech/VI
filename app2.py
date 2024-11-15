@@ -111,7 +111,7 @@ county_aggregates = data.groupby(['FIPS', 'County Names', 'State']).agg(
 
 county_aggregates['Shootings_Density'] = (county_aggregates['shooting_count'] / county_aggregates['population']) * 100000
 
-names_counties.rename(columns={'fips': 'FIPS'}, inplace=True)
+counties_df.rename(columns={'fips': 'FIPS'}, inplace=True)
 
 counties_geometries = vega_data.us_10m()['objects']['counties']['geometries']
 
@@ -119,9 +119,9 @@ counties_geometries = vega_data.us_10m()['objects']['counties']['geometries']
 counties_full = pd.DataFrame({
     'FIPS': [int(f['id']) for f in counties_geometries],
 })
-print(names_counties.columns)
+print(counties_df.columns)
 print(counties_full.columns)
-counties_full = pd.merge(counties_full, names_counties[['FIPS', 'county_name','state_name']], on='FIPS', how='left')
+counties_full = pd.merge(counties_full, counties_df[['FIPS', 'county_name','state_name']], on='FIPS', how='left')
 
 complete_data = counties_full.merge(county_aggregates, on='FIPS', how='left').fillna({
     'shooting_count': 0,
