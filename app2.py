@@ -155,6 +155,22 @@ median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     y=alt.Y('yearly_median:Q'),
     detail='Years:N' 
 )
+
+legend_text = alt.Chart(pd.DataFrame({'label': ['Median of Shootings per Year']})).mark_text(
+    align='center',
+    baseline='top',
+    fontSize=12,
+    font='Arial',
+    color='red'
+).encode(
+    x=alt.value(150),  # Ubicación horizontal de la leyenda
+    y=alt.value(20),   # Ajusta la posición vertical de la leyenda si es necesario
+    text='label:N'
+).properties(
+    width=300,
+    height=30
+)
+
 final_chart = trend_chart + median_rule
 
 ##Extra graphs
@@ -305,7 +321,7 @@ final_chart = (trend_chart + median_rule).properties(
         fontSize=14,
         fontWeight='bold'
     )
-).configure_legend(titleFontSize=10,labelFontSize=8,orient='bottom')
+) & legend_text
 
 final_plot2 = (scatter_plot2 + regression_line2).properties(
     width=300,
