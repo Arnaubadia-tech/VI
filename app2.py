@@ -36,11 +36,6 @@ state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
     color=alt.Color('per_100k:Q', scale=alt.Scale(scheme='reds'), legend=alt.Legend(title='Shootings per 100k'))
 )
 
-state_bar_chart = alt.Chart(state_aggregates).mark_bar().encode(
-    x=alt.X('State:N'),
-    y=alt.Y('per_100k:Q', title='Shootings per 100,000 Residents')
-)
-
 # Mapa coroplético por estado
 #vega_data.us_10m.url = https://raw.githubusercontent.com/vega/vega-datasets/master/data/us-10m.json
 states = alt.topo_feature(vega_data.us_10m.url, 'states')
@@ -59,8 +54,6 @@ state_aggregates = state_aggregates.merge(state_fips, on='State', how='left')
 
 color_scale = alt.Scale(scheme="reds", domain=[0, state_aggregates['per_100k'].max()], clamp=True)
 
-color_scale = alt.Scale(scheme="reds", domain=[0, state_aggregates['per_100k'].max()], clamp=True)
-
 ## Gráfico choropleth para todos los Estados Unidos
 choropleth = alt.Chart(states).mark_geoshape().encode(
     color=alt.Color('per_100k:Q', title='Shootings per 100k', scale=color_scale),
@@ -68,31 +61,9 @@ choropleth = alt.Chart(states).mark_geoshape().encode(
 ).transform_lookup(
     lookup='id',
     from_=alt.LookupData(state_aggregates, 'id', ['State', 'per_100k'])
-).properties(
-    width=800,
-    height=500,
-    title="Mass Shootings per 100,000 Residents by State in the US"
 ).project(
     type='albersUsa'
 )
-
-# zoom district of columbia
-zoom = alt.Chart(states).mark_geoshape().encode(
-    color=alt.Color('per_100k:Q', title='Shootings per 100k', scale=color_scale),
-    tooltip=['State:N', 'per_100k:Q']
-).transform_lookup(
-    lookup='id',
-    from_=alt.LookupData(state_aggregates, 'id', ['State', 'per_100k'])
-).properties(
-    width=800,
-    height=500,
-    title="Zoom on District of Columbia of Mass Shootings per 100,000 Residents by State in the US"
-).project(
-    type='albersUsa',
-    scale=4000,            # Aumentar el valor para hacer zoom
-    translate=[-700, 300]  # Ajustar
-)
-
 
 # Counties preprocessing
 county_aggregates = data.groupby(['FIPS', 'County Names', 'State']).agg(
@@ -115,10 +86,6 @@ complete_data = counties_full.merge(county_aggregates, on='FIPS', how='left').fi
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
 
-
-## Gráfico distribución por county
-color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
-
 # County geometry
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 
@@ -132,15 +99,9 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
 ).transform_lookup(
     lookup='id',
     from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
-).properties(
-    width=800,
-    height=500,
-    title="Mass Shootings per 100,000 Residents by County in the US"
 ).project(
     type='albersUsa'
 )
-
-
 
 # Gráfico de dispersión de incidentes escolares y tiroteos
 state_aggregates_incidents = school_df.groupby('State').agg(
