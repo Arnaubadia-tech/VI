@@ -211,44 +211,7 @@ regression_line3 = alt.Chart(merged_mental).transform_regression(
 
 final_plot3 = scatter_plot3 + regression_line3
 
-#### kills and injured
-state_victims = data.groupby('State').agg(
-    victims_killed=('Victims Killed', 'sum'),
-    victims_injured=('Victims Injured', 'sum')
-).reset_index()
-
-# Proportions
-state_victims['total_victims'] = state_victims['victims_killed'] + state_victims['victims_injured']
-state_victims['proportion_killed'] = state_victims['victims_killed'] / state_victims['total_victims']
-state_victims['proportion_injured'] = state_victims['victims_injured'] / state_victims['total_victims']
-# Transform
-stacked_data = state_victims.melt(
-    id_vars=['State'],
-    value_vars=['proportion_killed', 'proportion_injured'],
-    var_name='Category',
-    value_name='Proportion'
-)
-
-# Rename
-stacked_data['Category'] = stacked_data['Category'].replace({
-    'proportion_killed': 'Killed',
-    'proportion_injured': 'Injured'
-})
-
-# Crear el gráfico apilado
-stacked_chart = alt.Chart(stacked_data).mark_bar(opacity=0.9).encode(
-    x=alt.X('State:N', title='State', sort='-y'),
-    y=alt.Y('Proportion:Q', title='Proportion', stack='normalize'),
-    color=alt.Color('Category:N', 
-                    scale=alt.Scale(domain=['Killed', 'Injured'], range=['#B61818', '#6789E3']),
-                    title='Category'),
-    tooltip=['State:N', 'Category:N', alt.Tooltip('Proportion:Q', format='.2%')]
-).properties(
-    title="Proportion of Victims Killed vs Injured by State",
-    width=800,
-    height=500
-)
-
+## Apply properties depending on what we want
 state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
     x=alt.X('per_100k:Q', title='Shootings per 100,000 Residents'),
     y=alt.Y('State:N', title='State', sort='-x'),  
