@@ -251,7 +251,7 @@ merged_mental = pd.merge(mental, state_aggregates, on='State')
 
 # Crear el gráfico de dispersión
 scatter_plot3 = alt.Chart(merged_mental).mark_point(filled=True).encode(
-    x=alt.X('MentalHealthStatisticsRatesOfMentalIllness:Q', title='Mental Illness (%)', scale=alt.Scale(domain=[merged_poverty['MentalHealthStatisticsRatesOfMentalIllness'].min(),
+    x=alt.X('MentalHealthStatisticsRatesOfMentalIllness:Q', title='Mental Illness (%)',scale=alt.Scale(domain=[merged_poverty['MentalHealthStatisticsRatesOfMentalIllness'].min(),
                                     merged_poverty['MentalHealthStatisticsRatesOfMentalIllness'].max()])),
     y=alt.Y('per_100k:Q', title='Mass Shootings per 100k'),
     tooltip=['State:N', 'MentalHealthStatisticsRatesOfMentalIllness:Q', 'per_100k:Q'],
