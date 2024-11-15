@@ -3,6 +3,12 @@ import pandas as pd
 import altair as alt
 from vega_datasets import data as vega_data
 
+st.set_page_config(
+    page_title="VI Project", 
+    layout="wide",
+    initial_sidebar_state="expanded"  
+)
+
 # Cargar datos
 data = pd.read_csv('VIProjectMassShoting-csv2.csv')
 counties_df = pd.read_csv('co-est2023-alldata.csv', encoding='latin1')
