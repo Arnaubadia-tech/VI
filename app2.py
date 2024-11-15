@@ -144,31 +144,32 @@ monthly_counts = monthly_counts.merge(
     how='left'
 )
 # Monthly
-trend_chart = alt.Chart(monthly_counts).mark_line().encode(
+
+ trend_chart = alt.Chart(monthly_counts).mark_line().encode(
     x=alt.X('Year_Month:T', title='Year-Month'),
     y=alt.Y('count:Q', title='Number of Incidents'),
     tooltip=['Year_Month:T', 'count:Q']
 )
-#median yearly 
+
+# Crear la línea de mediana en color rojo
 median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     x=alt.X('Year_Month:T'),
     y=alt.Y('yearly_median:Q'),
-    detail='Years:N' 
+    detail='Years:N'
 )
 
-legend_text = alt.Chart(pd.DataFrame({'label': ['Median of Shootings per Year']})).mark_text(
+# Añadir una leyenda explicativa debajo del gráfico
+median_legend = alt.Chart().mark_text(
     align='center',
-    baseline='bottom',
+    baseline='top',
     fontSize=10,
     font='Arial',
     color='red'
 ).encode(
-    x=alt.value(120),  # Ubicación horizontal de la leyenda
-    y=alt.value(20),   # Ajusta la posición vertical de la leyenda si es necesario
-    text='label:N'
+    text=alt.value("Red line: Yearly median of shootings")  # Texto de la leyenda
 ).properties(
-    width=280,
-    height=20
+    width=300,
+    height=20  # Ajuste de altura para la leyenda
 )
 
 final_chart = trend_chart + median_rule
@@ -313,15 +314,22 @@ final_plot = (scatter_plot + regression_line).properties(
     orient='bottom'
 )
 
-final_chart = (trend_chart + median_rule).properties(
-    width=300,
-    height=400,
-    title=alt.TitleParams(
-        text="Mass Shootings Timeline",
-        fontSize=14,
-        fontWeight='bold'
-    )
-) & legend_text
+final_chart = alt.vconcat(
+    (trend_chart + median_rule).properties(
+        width=300,
+        height=400,
+        title=alt.TitleParams(
+            text="Mass Shootings Timeline",
+            fontSize=14,
+            fontWeight='bold'
+        )
+    ),
+    median_legend
+).configure_legend(
+    titleFontSize=10,
+    labelFontSize=8,
+    orient='bottom'
+)
 
 final_plot2 = (scatter_plot2 + regression_line2).properties(
     width=300,
