@@ -131,8 +131,6 @@ complete_data = counties_full.merge(county_aggregates, on='FIPS', how='left').fi
 
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 
-
-
 color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['Shootings_Density'].max()], clamp=True)
 
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
@@ -373,31 +371,18 @@ choropleth = alt.Chart(states).mark_geoshape().encode(
     type='albersUsa'
 )
 
-county_choropleth = alt.Chart(counties).mark_geoshape().encode(
-    color=alt.condition(
-        "datum.per_100k > 0",
-        alt.Color('per_100k:Q', 
-                 scale=color_scale, 
-                 title='Shootings per 100k',
-                 legend=alt.Legend(orient='bottom',
-                                 titleFontSize=10,
-                                 labelFontSize=8)),
-        alt.value('#F5F5F5')
-    ),
-    tooltip=['County Names:N', 'State:N', 'per_100k:Q']
-).transform_lookup(
-    lookup='id',
-    from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
-).properties(
+county_choropleth = alt.Chart(counties).mark_geoshape().properties(
     width=300,
     height=400,
     title=alt.TitleParams(
-        text="Mass Shootings by County",
+        text="Distribution of mass shootings by county",
         fontSize=14,
         fontWeight='bold'
     )
-).project(
-    type='albersUsa'
+).configure_legend(
+    titleFontSize=10,
+    labelFontSize=8,
+    orient='bottom'
 )
 
 final_plot = (scatter_plot + regression_line).properties(
