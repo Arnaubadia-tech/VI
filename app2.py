@@ -202,10 +202,9 @@ trend_chart = alt.Chart(monthly_counts).mark_line().encode(
     height=400
 )
 #median yearly 
-median_rule = alt.Chart(monthly_counts).mark_line().encode(
+median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     x=alt.X('Year_Month:T'),
     y=alt.Y('yearly_median:Q'),
-    color=alt.Color('Year_Month:T'), 
     detail='Years:N' 
 )
 
