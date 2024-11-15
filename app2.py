@@ -105,20 +105,20 @@ zoom = alt.Chart(states).mark_geoshape().encode(
 
 # Counties preprocessing
 county_aggregates = data.groupby(['FIPS', 'County Names', 'State']).agg(
-    shooting_count=('id', 'count'),            # Cuenta de tiroteos en cada condado
-    population=('POPESTIMATE2023', 'first')    # Población estimada en 2023, seleccionando el primer valor
+    shooting_count=('id', 'count'),            # Cuenta de tiroteos en cada condado
+    population=('POPESTIMATE2023', 'first')    # Población estimada en 2023, seleccionando el primer valor
 ).reset_index()
 
 county_aggregates['per_100k'] = (county_aggregates['shooting_count'] / county_aggregates['population']) * 100000
 
 counties_full = pd.DataFrame({
-    'FIPS': [int(f['id']) for f in vega_data.us_10m()['objects']['counties']['geometries']]
+    'FIPS': [int(f['id']) for f in vega_data.us_10m()['objects']['counties']['geometries']]
 })
 
 complete_data = counties_full.merge(county_aggregates, on='FIPS', how='left').fillna({
-    'shooting_count': 0,      # Establece en 0 si no hay tiroteos reportados
-    'population': 1,          # Establece en 1 para evitar divisiones por cero
-    'per_100k': 0             # Establece en 0 para los condados sin tiroteos
+    'shooting_count': 0,      # Establece en 0 si no hay tiroteos reportados
+    'population': 1,          # Establece en 1 para evitar divisiones por cero
+    'per_100k': 0             # Establece en 0 para los condados sin tiroteos
 })
 
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
@@ -132,21 +132,21 @@ color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
-    color=alt.condition(
-        "datum.per_100k > 0",
-        alt.Color('per_100k:Q', scale=color_scale, title='Shootings per 100k'),
-        alt.value('#F5F5F5')  # Grey color
-    ),
-    tooltip=['County Names:N', 'State:N', 'per_100k:Q']
+    color=alt.condition(
+        "datum.per_100k > 0",
+        alt.Color('per_100k:Q', scale=color_scale, title='Shootings per 100k'),
+        alt.value('#F5F5F5')  # Grey color
+    ),
+    tooltip=['County Names:N', 'State:N', 'per_100k:Q']
 ).transform_lookup(
-    lookup='id',
-    from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
+    lookup='id',
+    from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
 ).properties(
-    width=800,
-    height=500,
-    title="Mass Shootings per 100,000 Residents by County in the US"
+    width=800,
+    height=500,
+    title="Mass Shootings per 100,000 Residents by County in the US"
 ).project(
-    type='albersUsa'
+    type='albersUsa'
 )
 
 
@@ -191,8 +191,7 @@ monthly_counts = monthly_counts.merge(
     right_on='Years',
     how='left'
 )
-
-## grafic
+# Monthly
 trend_chart = alt.Chart(monthly_counts).mark_line().encode(
     x=alt.X('Year_Month:T', title='Year-Month'),
     y=alt.Y('count:Q', title='Number of Incidents'),
@@ -202,30 +201,14 @@ trend_chart = alt.Chart(monthly_counts).mark_line().encode(
     width=800,
     height=400
 )
-
-# Añadimos la mediana anual
+#median yearly 
 median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     x=alt.X('Year_Month:T'),
-    y=alt.Y('yearly_median:Q'),
+    y=alt.Y('yearly_median:Q', title='Median Incidents per Month'),
     detail='Years:N' 
 )
 
-# Añadimos la leyenda explicativa para la línea roja
-median_legend = alt.Chart().mark_text(
-    align='left',
-    baseline='middle',
-    dx=5,
-    color='red'
-).encode(
-    x=alt.value(10),  # Ubicación horizontal del texto
-    y=alt.value(10),  # Ubicación vertical del texto
-    text=alt.value('Mediana de incidentes anuales (línea roja)')
-)
-
-# Combinamos todo en un solo gráfico
-final_chart = (trend_chart + median_rule + median_legend).resolve_scale(
-    color='independent'
-)
+final_chart = trend_chart + median_rule
 
 ##Extra graphs
 #Poverty
@@ -239,8 +222,7 @@ merged_poverty = pd.merge(poverty, state_aggregates, on='State')
 
 # Graph
 scatter_plot2 = alt.Chart(merged_poverty).mark_point(filled=True).encode(
-    x=alt.X('PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', title='Poverty Rate (%)',scale=alt.Scale(domain=[merged_poverty['PovertyRatesPercentOfPopulationBelowPovertyLevel'].min(),
-                                    merged_poverty['PovertyRatesPercentOfPopulationBelowPovertyLevel'].max()])),
+    x=alt.X('PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', title='Poverty Rate (%)'),
     y=alt.Y('per_100k:Q', title='School Shootings per 100k'),
     tooltip=['State:N', 'PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', 'per_100k:Q'],
     size='population:Q'  # Tamaño opcional basado en la población
@@ -268,8 +250,7 @@ merged_mental = pd.merge(mental, state_aggregates, on='State')
 
 # Crear el gráfico de dispersión
 scatter_plot3 = alt.Chart(merged_mental).mark_point(filled=True).encode(
-    x=alt.X('MentalHealthStatisticsRatesOfMentalIllness:Q', title='Mental Illness (%)',scale=alt.Scale(domain=[merged_mental['MentalHealthStatisticsRatesOfMentalIllness'].min(),
-                                    merged_mental['MentalHealthStatisticsRatesOfMentalIllness'].max()])),
+    x=alt.X('MentalHealthStatisticsRatesOfMentalIllness:Q', title='Mental Illness (%)'),
     y=alt.Y('per_100k:Q', title='Mass Shootings per 100k'),
     tooltip=['State:N', 'MentalHealthStatisticsRatesOfMentalIllness:Q', 'per_100k:Q'],
     size='population:Q'  # Tamaño opcional basado en la población
@@ -371,18 +352,31 @@ choropleth = alt.Chart(states).mark_geoshape().encode(
     type='albersUsa'
 )
 
-county_choropleth = alt.Chart(counties).mark_geoshape().properties(
+county_choropleth = alt.Chart(counties).mark_geoshape().encode(
+    color=alt.condition(
+        "datum.per_100k > 0",
+        alt.Color('per_100k:Q', 
+                 scale=color_scale, 
+                 title='Shootings per 100k',
+                 legend=alt.Legend(orient='bottom',
+                                 titleFontSize=10,
+                                 labelFontSize=8)),
+        alt.value('#F5F5F5')
+    ),
+    tooltip=['County Names:N', 'State:N', 'per_100k:Q']
+).transform_lookup(
+    lookup='id',
+    from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
+).properties(
     width=300,
     height=400,
     title=alt.TitleParams(
-        text="Distribution of mass shootings by county",
+        text="Mass Shootings by County",
         fontSize=14,
         fontWeight='bold'
     )
-).configure_legend(
-    titleFontSize=10,
-    labelFontSize=8,
-    orient='bottom'
+).project(
+    type='albersUsa'
 )
 
 final_plot = (scatter_plot + regression_line).properties(
