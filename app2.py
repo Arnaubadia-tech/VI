@@ -322,7 +322,7 @@ final_chart = (trend_chart + median_rule + legend_chart).properties(
         fontSize=14,
         fontWeight='bold'
     )
-)#.configure_legend(titleFontSize=10,labelFontSize=8,orient='bottom')
+).configure_legend(titleFontSize=10,labelFontSize=8,orient='bottom')
 
 final_plot2 = (scatter_plot2 + regression_line2).properties(
     width=300,
