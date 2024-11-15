@@ -134,8 +134,8 @@ counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
     color=alt.condition(
         "datum.per_100k > 0",
-        alt.Color('per_100k:Q', scale=color_scale, title='Shootings per 100k'),
-        alt.value('#F5F5F5')  # Grey color
+        alt.Color('per_100k:Q', scale=color_scale, title='Tiroteos por 100k'),
+        alt.value('#F5F5F5')
     ),
     tooltip=['County Names:N', 'State:N', 'per_100k:Q']
 ).transform_lookup(
@@ -144,7 +144,7 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
 ).properties(
     width=800,
     height=500,
-    title="Mass Shootings per 100,000 Residents by County in the US"
+    title="Tiroteos masivos por cada 100,000 habitantes por condado en EE.UU."
 ).project(
     type='albersUsa'
 )
