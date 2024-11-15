@@ -184,7 +184,7 @@ poverty = pd.merge(data, poverty[['State', 'PovertyRatesPercentOfPopulationBelow
 merged_poverty = pd.merge(poverty, state_aggregates, on='State')
 
 # Graph
-scatter_plot2 = alt.Chart(merged_poverty).mark_point(filled=True, opacity=0.7).encode(
+scatter_plot2 = alt.Chart(merged_poverty).mark_point(filled=True, opacity=0.4).encode(
     x=alt.X('PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', title='Poverty Rate (%)',scale=alt.Scale(zero=False)),
     y=alt.Y('per_100k:Q', title='School Shootings per 100k'),
     tooltip=['State:N', 'PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', 'per_100k:Q'],
