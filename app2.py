@@ -72,24 +72,15 @@ color_scale = alt.Scale(scheme="reds", domain=[0, state_aggregates['per_100k'].m
 
 ## Gráfico choropleth para todos los Estados Unidos
 choropleth = alt.Chart(states).mark_geoshape().encode(
-    color=alt.Color('per_100k:Q', 
-                   title='Shootings per 100k', 
-                   scale=color_scale,
-                   legend=alt.Legend(orient='bottom',
-                                   titleFontSize=10,
-                                   labelFontSize=8)),
+    color=alt.Color('per_100k:Q', title='Shootings per 100k', scale=color_scale),
     tooltip=['State:N', 'per_100k:Q']
 ).transform_lookup(
     lookup='id',
     from_=alt.LookupData(state_aggregates, 'id', ['State', 'per_100k'])
 ).properties(
-    width=300,
-    height=400,
-    title=alt.TitleParams(
-        text="Mass Shootings Distribution by State",
-        fontSize=14,
-        fontWeight='bold'
-    )
+    width=800,
+    height=500,
+    title="Mass Shootings per 100,000 Residents by State in the US"
 ).project(
     type='albersUsa'
 )
@@ -340,6 +331,28 @@ state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
     height=400
 )
 
+choropleth = alt.Chart(states).mark_geoshape().encode(
+    color=alt.Color('per_100k:Q', 
+                   title='Shootings per 100k', 
+                   scale=color_scale,
+                   legend=alt.Legend(orient='bottom',
+                                   titleFontSize=10,
+                                   labelFontSize=8)),
+    tooltip=['State:N', 'per_100k:Q']
+).transform_lookup(
+    lookup='id',
+    from_=alt.LookupData(state_aggregates, 'id', ['State', 'per_100k'])
+).properties(
+    width=300,
+    height=400,
+    title=alt.TitleParams(
+        text="Mass Shootings Distribution by State",
+        fontSize=14,
+        fontWeight='bold'
+    )
+).project(
+    type='albersUsa'
+)
 
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
     color=alt.condition(
@@ -388,13 +401,13 @@ final_chart = (trend_chart + median_rule).properties(
     title=alt.TitleParams(
         text="Mass Shootings Timeline",
         fontSize=14,
-        fontWeight='bold')).configure_legend(
-    title='Red line equals yearly median',
+        fontWeight='bold'
+    )
+).configure_legend(
     titleFontSize=10,
     labelFontSize=8,
     orient='bottom'
 )
-
 
 final_plot2 = (scatter_plot2 + regression_line2).properties(
     width=300,
