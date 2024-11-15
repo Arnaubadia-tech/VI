@@ -109,27 +109,31 @@ county_aggregates = data.groupby(['FIPS', 'County Names', 'State']).agg(
     population=('POPESTIMATE2023', 'first')    # Población estimada en 2023, seleccionando el primer valor
 ).reset_index()
 
-county_aggregates['per_100k'] = (county_aggregates['shooting_count'] / county_aggregates['population']) * 100000
+county_aggregates['Shootings_Density'] = (county_aggregates['shooting_count'] / county_aggregates['population']) * 100000
 
+names_counties.rename(columns={'fips': 'FIPS'}, inplace=True)
+
+counties_geometries = vega_data.us_10m()['objects']['counties']['geometries']
+
+# Crear un DataFrame con FIPS y el nombre del condado (si está disponible en las propiedades)
 counties_full = pd.DataFrame({
-    'FIPS': [int(f['id']) for f in vega_data.us_10m()['objects']['counties']['geometries']]
+    'FIPS': [int(f['id']) for f in counties_geometries],
 })
+print(names_counties.columns)
+print(counties_full.columns)
+counties_full = pd.merge(counties_full, names_counties[['FIPS', 'county_name','state_name']], on='FIPS', how='left')
 
 complete_data = counties_full.merge(county_aggregates, on='FIPS', how='left').fillna({
-    'shooting_count': 0,      # Establece en 0 si no hay tiroteos reportados
-    'population': 1,          # Establece en 1 para evitar divisiones por cero
-    'per_100k': 0             # Establece en 0 para los condados sin tiroteos
+    'shooting_count': 0,
+    'population': 1,  # Set to 1 to avoid division by zero
+    'Shootings_Density': 0     # Set to 0 for counties with no shootings
 })
 
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
-color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
 
 
-## Gráfico distribución por county
-color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
 
-# County geometry
-counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
+color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['Shootings_Density'].max()], clamp=True)
 
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
     color=alt.condition(
