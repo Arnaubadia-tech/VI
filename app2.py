@@ -307,6 +307,7 @@ final_chart = (trend_chart + median_rule).properties(
         fontWeight='bold'
     )
 ).configure_legend(
+    title='red equals median',
     titleFontSize=10,
     labelFontSize=8,
     orient='bottom'
