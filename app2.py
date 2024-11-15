@@ -132,29 +132,22 @@ color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
-    color=alt.Color('per_100k:Q', 
-                    scale=color_scale, 
-                    title='Tiroteos por 100k',
-                    legend=alt.Legend(orient='bottom', titleFontSize=10, labelFontSize=8)),  # No usamos condición aquí
-    tooltip=[
-        'County Names:N', 
-        'State:N',
-        alt.Tooltip('per_100k:Q', title='Tiroteos por 100k', format='.2f', 
-                   aggregate='mean', 
-                   scale=alt.Scale(domain=[0, 100]),  # Aquí puedes ajustar el dominio si lo prefieres
-                   defaultValue=0)  # Si el valor es null, mostrar 0
-    ]
+    color=alt.condition(
+        "datum.Shootings_Density > 0",
+        alt.Color('Shootings_Density:Q', scale=color_scale, title='Shootings per 100k'),
+        alt.value('#F5F5F5')  # Grey for zero shootings
+    ),
+    tooltip=['county_name:N', 'state_name:N', 'Shootings_Density:Q']
 ).transform_lookup(
     lookup='id',
-    from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
+    from_=alt.LookupData(complete_data, 'FIPS', ['county_name', 'state_name', 'Shootings_Density'])
 ).properties(
     width=800,
     height=500,
-    title="Tiroteos masivos por cada 100,000 habitantes por condado en EE.UU."
+    title="Mass Shootings per 100,000 Residents by County in the US"
 ).project(
     type='albersUsa'
 )
-
 
 # Gráfico de dispersión de incidentes escolares y tiroteos
 state_aggregates_incidents = school_df.groupby('State').agg(
