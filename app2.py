@@ -134,9 +134,16 @@ counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
     color=alt.Color('per_100k:Q', 
                     scale=color_scale, 
-                    title='Shootings per 100k',
+                    title='Tiroteos por 100k',
                     legend=alt.Legend(orient='bottom', titleFontSize=10, labelFontSize=8)),  # No usamos condición aquí
-    tooltip=['County Names:N', 'State:N', 'per_100k:Q']  # El tooltip siempre mostrará los valores
+    tooltip=[
+        'County Names:N', 
+        'State:N',
+        alt.Tooltip('per_100k:Q', title='Tiroteos por 100k', format='.2f', 
+                   aggregate='mean', 
+                   scale=alt.Scale(domain=[0, 100]),  # Aquí puedes ajustar el dominio si lo prefieres
+                   defaultValue=0)  # Si el valor es null, mostrar 0
+    ]
 ).transform_lookup(
     lookup='id',
     from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
@@ -147,7 +154,6 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
 ).project(
     type='albersUsa'
 )
-
 
 
 # Gráfico de dispersión de incidentes escolares y tiroteos
