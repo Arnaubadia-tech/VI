@@ -439,8 +439,7 @@ final_plot3 = (scatter_plot3 + regression_line3).properties(
 # Display layout
 st.markdown("<h1 style='text-align: center;'>Mass Shootings in the US</h1>", unsafe_allow_html=True)
 
-# First row - 4 graphs
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     st.altair_chart(state_bar_chart2, use_container_width=True)
@@ -451,14 +450,14 @@ with col2:
 with col3:
     st.altair_chart(county_choropleth, use_container_width=True)
 
-with col4:
-    st.altair_chart(final_plot, use_container_width=True)
-
 # Add space between rows
 st.markdown("<div style='padding-top: 30px;'></div>", unsafe_allow_html=True)
 
-# Second row - 3 graphs
-col5, col6, col7 = st.columns(3)
+# Second row - 4 graphs
+col4, col5, col6, col7 = st.columns(4)
+
+with col4:
+    st.altair_chart(final_plot, use_container_width=True)
 
 with col5:
     st.altair_chart(final_chart, use_container_width=True)
