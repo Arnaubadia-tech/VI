@@ -107,7 +107,6 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
 ).project(
     type='albersUsa'
 )
-county_choropleth
 
 # Gráfico de dispersión de incidentes escolares y tiroteos
 state_aggregates_incidents = school_df.groupby('State').agg(
@@ -278,22 +277,7 @@ choropleth = alt.Chart(states).mark_geoshape().encode(
     type='albersUsa'
 )
 
-county_choropleth = alt.Chart(counties).mark_geoshape().encode(
-    color=alt.condition(
-        "datum.per_100k > 0",
-        alt.Color('per_100k:Q', 
-                 scale=color_scale, 
-                 title='Shootings per 100k',
-                 legend=alt.Legend(orient='bottom',
-                                 titleFontSize=10,
-                                 labelFontSize=8)),
-        alt.value('#F5F5F5')
-    ),
-    tooltip=['County Names:N', 'State:N', 'per_100k:Q']
-).transform_lookup(
-    lookup='id',
-    from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
-).properties(
+county_choropleth = alt.Chart(counties).mark_geoshape().properties(
     width=300,
     height=400,
     title=alt.TitleParams(
@@ -301,8 +285,6 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
         fontSize=14,
         fontWeight='bold'
     )
-).project(
-    type='albersUsa'
 )
 
 final_plot = (scatter_plot + regression_line).properties(
