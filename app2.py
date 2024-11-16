@@ -167,7 +167,20 @@ regression_line = alt.Chart(state_aggregates_global).transform_regression(
     x='incidents_per_100k:Q',
     y='per_100k:Q'
 )
-final_plot = scatter_plot + regression_line
+
+final_plot = (scatter_plot + regression_line).properties(
+    width=300,
+    height=400,
+    title=alt.TitleParams(
+        text="School Incidents vs Mass Shootings",
+        fontSize=14,
+        fontWeight='bold'
+    )
+).configure_legend(
+    titleFontSize=10,
+    labelFontSize=8,
+    orient='bottom'
+)
 
 
 ## Line chart evolución
@@ -215,7 +228,19 @@ legend_text = alt.Chart().mark_text(
     text=alt.value("Red line: Yearly median of shootings")  # Texto de la leyenda
 )
 
-final_chart = trend_chart + median_rule
+final_chart = (trend_chart + median_rule ).properties(
+    width=300,
+    height=400,
+    title=alt.TitleParams(
+        text="Mass Shootings Timeline",
+        fontSize=14,
+        fontWeight='bold'
+    )
+).configure_legend(
+    titleFontSize=10,
+    labelFontSize=8,
+    orient='bottom'
+)
 
 ##Extra graphs
 #Poverty
@@ -257,7 +282,7 @@ final_plot2 = (scatter_plot2 + regression_line2).properties(
     orient='bottom'
 )
 
-# Mental illness
+## Mental illness
 mental = pd.read_csv('mental_ill.csv')
 mental = mental.rename(columns={'state': 'State'})
 # Fusionar los datos de enfermedades mentales con el dataset principal data
@@ -286,34 +311,6 @@ final_plot3 = (scatter_plot3 + regression_line3).properties(
     height=400,
     title=alt.TitleParams(
         text="Mental Health vs Mass Shootings",
-        fontSize=14,
-        fontWeight='bold'
-    )
-).configure_legend(
-    titleFontSize=10,
-    labelFontSize=8,
-    orient='bottom'
-)
-
-final_plot = (scatter_plot + regression_line).properties(
-    width=300,
-    height=400,
-    title=alt.TitleParams(
-        text="School Incidents vs Mass Shootings",
-        fontSize=14,
-        fontWeight='bold'
-    )
-).configure_legend(
-    titleFontSize=10,
-    labelFontSize=8,
-    orient='bottom'
-)
-
-final_chart = (final_chart ).properties(
-    width=300,
-    height=400,
-    title=alt.TitleParams(
-        text="Mass Shootings Timeline",
         fontSize=14,
         fontWeight='bold'
     )
