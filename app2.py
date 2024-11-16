@@ -15,6 +15,7 @@ counties_df = pd.read_csv('co-est2023-alldata.csv', encoding='latin1')
 school_df = pd.read_csv('school.csv')
 poverty = pd.read_csv('poverty.csv')
 mental = pd.read_csv('mental_ill.csv')
+finalcounties = pd.read_csv('finalcounties.csv')
 
 # Preprocesamiento de datos
 counties_df = counties_df.rename(columns={'CTYNAME': 'County Names', 'STNAME': 'State'})
@@ -91,17 +92,22 @@ counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
     color=alt.condition(
-        "datum.per_100k > 0",
-        alt.Color('per_100k:Q', scale=color_scale, title='Shootings per 100k'),
-        alt.value('#F5F5F5')  # Grey color
+        "datum.Shootings_Density > 0",
+        alt.Color('Shootings_Density:Q', scale=color_scale, title='Shootings per 100k'),
+        alt.value('#F5F5F5')  # Grey for zero shootings
     ),
-    tooltip=['County Names:N', 'State:N', 'per_100k:Q']
+    tooltip=['county_name:N', 'state_name:N', 'Shootings_Density:Q']
 ).transform_lookup(
     lookup='id',
-    from_=alt.LookupData(complete_data, 'FIPS', ['County Names', 'State', 'per_100k'])
+    from_=alt.LookupData(finalcounties, 'FIPS', ['county_name', 'state_name', 'Shootings_Density'])
+).properties(
+    width=800,
+    height=500,
+    title="Mass Shootings per 100,000 Residents by County in the US"
 ).project(
     type='albersUsa'
 )
+county_choropleth
 
 # Gráfico de dispersión de incidentes escolares y tiroteos
 state_aggregates_incidents = school_df.groupby('State').agg(
