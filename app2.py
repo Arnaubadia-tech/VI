@@ -101,9 +101,11 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
     lookup='id',
     from_=alt.LookupData(finalcounties, 'FIPS', ['county_name', 'state_name', 'Shootings_Density'])
 ).properties(
-    width=800,
-    height=500,
-    title="Mass Shootings per 100,000 Residents by County in the US"
+    width=300,
+    height=400,
+    title="Mass Shootings per 100,000 Residents by County in the US",
+    fontSize=14,
+    fontWeight='bold'
 ).project(
     type='albersUsa'
 )
@@ -275,16 +277,6 @@ choropleth = alt.Chart(states).mark_geoshape().encode(
     )
 ).project(
     type='albersUsa'
-)
-
-county_choropleth = alt.Chart(counties).mark_geoshape().properties(
-    width=300,
-    height=400,
-    title=alt.TitleParams(
-        text="Mass Shootings by County",
-        fontSize=14,
-        fontWeight='bold'
-    )
 )
 
 final_plot = (scatter_plot + regression_line).properties(
