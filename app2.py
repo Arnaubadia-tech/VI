@@ -103,9 +103,11 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
 ).properties(
     width=300,
     height=400,
-    title="Mass Shootings per 100,000 Residents by County in the US",
-    fontSize=14,
-    fontWeight='bold'
+    title=alt.TitleParams(
+        text="Mass Shootings per 100,000 Residents by County in the US",
+        fontSize=14,
+        fontWeight='bold'
+    )
 ).project(
     type='albersUsa'
 )
