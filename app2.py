@@ -214,7 +214,7 @@ median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     detail='Years:N' 
 )
 
-# Leyenda para la línea de mediana debajo del gráfico
+# Leyenda textual fija debajo del gráfico
 legend_text = alt.Chart().mark_text(
     align='center',
     baseline='top',
