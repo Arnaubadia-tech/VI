@@ -109,6 +109,7 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
 ).project(
     type='albersUsa'
 )
+county_choropleth
 
 # Gráfico de dispersión de incidentes escolares y tiroteos
 state_aggregates_incidents = school_df.groupby('State').agg(
