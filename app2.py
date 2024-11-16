@@ -73,11 +73,24 @@ color_scale = alt.Scale(scheme="reds", domain=[0, state_aggregates['per_100k'].m
 
 ## Gráfico choropleth para todos los Estados Unidos
 choropleth = alt.Chart(states).mark_geoshape().encode(
-    color=alt.Color('per_100k:Q', title='Shootings per 100k', scale=color_scale),
+    color=alt.Color('per_100k:Q', 
+                   title='Shootings per 100k', 
+                   scale=color_scale,
+                   legend=alt.Legend(orient='bottom',
+                                   titleFontSize=10,
+                                   labelFontSize=8)),
     tooltip=['State:N', 'per_100k:Q']
 ).transform_lookup(
     lookup='id',
     from_=alt.LookupData(state_aggregates, 'id', ['State', 'per_100k'])
+).properties(
+    width=300,
+    height=400,
+    title=alt.TitleParams(
+        text="Mass Shootings Distribution by State",
+        fontSize=14,
+        fontWeight='bold'
+    )
 ).project(
     type='albersUsa'
 )
@@ -229,7 +242,20 @@ regression_line2 = alt.Chart(merged_poverty).transform_regression(
     x='PovertyRatesPercentOfPopulationBelowPovertyLevel:Q',
     y='per_100k:Q'
 )
-final_plot2 = scatter_plot2 + regression_line2
+
+final_plot2 = (scatter_plot2 + regression_line2).properties(
+    width=300,
+    height=400,
+    title=alt.TitleParams(
+        text="Poverty Rate vs Mass Shootings",
+        fontSize=14,
+        fontWeight='bold'
+    )
+).configure_legend(
+    titleFontSize=10,
+    labelFontSize=8,
+    orient='bottom'
+)
 
 # Mental illness
 mental = pd.read_csv('mental_ill.csv')
@@ -255,29 +281,18 @@ regression_line3 = alt.Chart(merged_mental).transform_regression(
     y='per_100k:Q'
 )
 
-final_plot3 = scatter_plot3 + regression_line3
-
-choropleth = alt.Chart(states).mark_geoshape().encode(
-    color=alt.Color('per_100k:Q', 
-                   title='Shootings per 100k', 
-                   scale=color_scale,
-                   legend=alt.Legend(orient='bottom',
-                                   titleFontSize=10,
-                                   labelFontSize=8)),
-    tooltip=['State:N', 'per_100k:Q']
-).transform_lookup(
-    lookup='id',
-    from_=alt.LookupData(state_aggregates, 'id', ['State', 'per_100k'])
-).properties(
+final_plot3 = (scatter_plot3 + regression_line3).properties(
     width=300,
     height=400,
     title=alt.TitleParams(
-        text="Mass Shootings Distribution by State",
+        text="Mental Health vs Mass Shootings",
         fontSize=14,
         fontWeight='bold'
     )
-).project(
-    type='albersUsa'
+).configure_legend(
+    titleFontSize=10,
+    labelFontSize=8,
+    orient='bottom'
 )
 
 final_plot = (scatter_plot + regression_line).properties(
@@ -299,34 +314,6 @@ final_chart = (final_chart ).properties(
     height=400,
     title=alt.TitleParams(
         text="Mass Shootings Timeline",
-        fontSize=14,
-        fontWeight='bold'
-    )
-).configure_legend(
-    titleFontSize=10,
-    labelFontSize=8,
-    orient='bottom'
-)
-
-final_plot2 = (scatter_plot2 + regression_line2).properties(
-    width=300,
-    height=400,
-    title=alt.TitleParams(
-        text="Poverty Rate vs Mass Shootings",
-        fontSize=14,
-        fontWeight='bold'
-    )
-).configure_legend(
-    titleFontSize=10,
-    labelFontSize=8,
-    orient='bottom'
-)
-
-final_plot3 = (scatter_plot3 + regression_line3).properties(
-    width=300,
-    height=400,
-    title=alt.TitleParams(
-        text="Mental Health vs Mass Shootings",
         fontSize=14,
         fontWeight='bold'
     )
