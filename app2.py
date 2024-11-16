@@ -85,17 +85,21 @@ complete_data = counties_full.merge(county_aggregates, on='FIPS', how='left').fi
 })
 
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
-color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
+#color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
 
 # County geometry
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 
 county_choropleth = alt.Chart(counties).mark_geoshape().encode(
-    color=alt.condition(
+   color=alt.condition(
         "datum.Shootings_Density > 0",
-        alt.Color('Shootings_Density:Q', scale=alt.Scale(scheme='blues'), title='Shootings per 100k'),
-        legend=alt.Legend(orient='bottom'),
-        alt.value('#F5F5F5')  # Grey for zero shootings
+        alt.Color(
+            'Shootings_Density:Q',
+            scale=alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True),
+            title='Shootings per 100k',
+            legend=alt.Legend(orient='bottom')  # Mover la leyenda debajo
+        ),
+        alt.value('#F5F5F5')  # Gris para densidad cero
     ),
     tooltip=['county_name:N', 'state_name:N', 'Shootings_Density:Q']
 ).transform_lookup(
