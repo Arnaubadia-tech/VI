@@ -96,8 +96,6 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
         alt.Color('Shootings_Density:Q', scale=alt.Scale(scheme='blues'), title='Shootings per 100k'),
         alt.value('#F5F5F5')  # Grey for zero shootings
     ),
-        alt.value('#F5F5F5')  # Gris para densidad cero
-    ),
     tooltip=['county_name:N', 'state_name:N', 'Shootings_Density:Q']
 ).transform_lookup(
     lookup='id',
