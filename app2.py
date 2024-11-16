@@ -171,7 +171,7 @@ legend_text = alt.Chart().mark_text(
     text=alt.value("Red line: Yearly median of shootings")  # Texto de la leyenda
 )
 
-final_chart = trend_chart + median_rule & legend_text
+final_chart = trend_chart + median_rule
 
 ##Extra graphs
 #Poverty
@@ -325,7 +325,7 @@ final_chart = (final_chart ).properties(
     titleFontSize=10,
     labelFontSize=8,
     orient='bottom'
-)
+) & legend_text
 
 final_plot2 = (scatter_plot2 + regression_line2).properties(
     width=300,
