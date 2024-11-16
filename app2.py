@@ -214,37 +214,36 @@ median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
     detail='Years:N' 
 )
 
-# Leyenda textual fija debajo del gráfico
+# Leyenda textual fija debajo del gráfico (superposición)
 legend_text = alt.Chart().mark_text(
     align='center',
     baseline='top',
     fontSize=10,
     font='Arial',
     color='red',
-    dy=10  # Ajuste vertical para colocar debajo del gráfico
 ).encode(
     text=alt.value("Red line: Yearly median of shootings")  # Texto de la leyenda
 ).properties(
     width=300,
-    height=30  # Altura reservada para la leyenda textual
+    height=400
+).mark_text(
+    align='center',
+    baseline='bottom',
+    dy=20  # Ajuste vertical para colocar justo debajo del gráfico
 )
 
-# Composición final
-final_chart = alt.vconcat(
-    (trend_chart + median_rule).properties(
-        width=300,
-        height=370,  # Altura ajustada para dejar espacio para la leyenda
-        title=alt.TitleParams(
-            text="Mass Shootings Timeline",
-            fontSize=14,
-            fontWeight='bold'
-        )
-    ),
-    legend_text  # Añadir la leyenda textual como subgráfico
-).configure_legend(
-    titleFontSize=10,
-    labelFontSize=8,
-    orient='bottom'
+# Combinación final con capa de texto superpuesta
+final_chart = (trend_chart + median_rule).properties(
+    width=300,
+    height=370,  # Altura ajustada para no afectar el espacio total (con leyenda textual)
+    title=alt.TitleParams(
+        text="Mass Shootings Timeline",
+        fontSize=14,
+        fontWeight='bold'
+    )
+) & legend_text.properties(
+    width=300,
+    height=30  # Espacio total reservado para la leyenda textual
 )
 
 ##Extra graphs
