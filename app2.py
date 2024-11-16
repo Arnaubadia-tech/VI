@@ -34,7 +34,23 @@ state_aggregates['per_100k'] = (state_aggregates['shooting_count'] / state_aggre
 state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
     x=alt.X('per_100k:Q', title='Shootings per 100,000 Residents'),
     y=alt.Y('State:N', title='State', sort='-x'),  
-    color=alt.Color('per_100k:Q', scale=alt.Scale(scheme='reds'), legend=alt.Legend(title='Shootings per 100k'))
+    color=alt.Color('per_100k:Q', 
+                   scale=alt.Scale(scheme='reds'), 
+                   legend=alt.Legend(title='Shootings per 100k', 
+                                   orient='bottom',
+                                   titleFontSize=10,
+                                   labelFontSize=8,
+    legendX=0,
+    direction='horizontal',
+    padding=5))
+).properties(
+    title=alt.TitleParams(
+        text='Mass Shootings per Capita by State',
+        fontSize=14,
+        fontWeight='bold'
+    ),
+    width=300,
+    height=400
 )
 
 # Mapa coroplético por estado
@@ -66,7 +82,8 @@ choropleth = alt.Chart(states).mark_geoshape().encode(
     type='albersUsa'
 )
 
-# Counties preprocessing
+## Counties preprocessing
+## not necessary, done in collab, see finalcounties
 county_aggregates = data.groupby(['FIPS', 'County Names', 'State']).agg(
     shooting_count=('id', 'count'),            # Cuenta de tiroteos en cada condado
     population=('POPESTIMATE2023', 'first')    # Población estimada en 2023, seleccionando el primer valor
@@ -84,7 +101,6 @@ complete_data = counties_full.merge(county_aggregates, on='FIPS', how='left').fi
     'per_100k': 0             # Establece en 0 para los condados sin tiroteos
 })
 
-counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 #color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
 
 # County geometry
@@ -240,29 +256,6 @@ regression_line3 = alt.Chart(merged_mental).transform_regression(
 )
 
 final_plot3 = scatter_plot3 + regression_line3
-
-## Apply properties depending on what we want
-state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
-    x=alt.X('per_100k:Q', title='Shootings per 100,000 Residents'),
-    y=alt.Y('State:N', title='State', sort='-x'),  
-    color=alt.Color('per_100k:Q', 
-                   scale=alt.Scale(scheme='reds'), 
-                   legend=alt.Legend(title='Shootings per 100k', 
-                                   orient='bottom',
-                                   titleFontSize=10,
-                                   labelFontSize=8,
-    legendX=0,
-    direction='horizontal',
-    padding=5))
-).properties(
-    title=alt.TitleParams(
-        text='Mass Shootings per Capita by State',
-        fontSize=14,
-        fontWeight='bold'
-    ),
-    width=300,
-    height=400
-)
 
 choropleth = alt.Chart(states).mark_geoshape().encode(
     color=alt.Color('per_100k:Q', 
