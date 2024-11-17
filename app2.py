@@ -18,6 +18,7 @@ mental = pd.read_csv('mental_ill.csv')
 finalcounties = pd.read_csv('finalcounties.csv')
 finalstates = pd.read_csv('Q2.1dataset (1).csv')
 barchart = pd.read_csv('Q1dataset.csv')
+scatterplot = pd.read_csv('Q3.2dataset.csv')
 
 ## Mass Shootings per Capita by State (per 100k)
 state_bar_chart2 = alt.Chart(barchart).mark_bar().encode(
@@ -107,20 +108,14 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
 
 
 # Gráfico de dispersión de incidentes escolares y tiroteos
-state_aggregates_incidents = school_df.groupby('State').agg(
-    incident_count=('Incident ID', 'count'),
-    population=('State Population', 'first')
-).reset_index()
-state_aggregates_incidents['incidents_per_100k'] = (state_aggregates_incidents['incident_count'] / state_aggregates_incidents['population']) * 100000
-state_aggregates_global = pd.merge(state_aggregates, state_aggregates_incidents[['State', 'incidents_per_100k']], on='State')
 
-scatter_plot = alt.Chart(state_aggregates_global).mark_point(filled=True).encode(
+scatter_plot = alt.Chart(scatterplot).mark_point(filled=True).encode(
     x=alt.X('incidents_per_100k:Q', title='School Incidents per 100k'),
     y=alt.Y('per_100k:Q', title='School Shootings per 100k'),
     tooltip=['State:N', 'incidents_per_100k:Q', 'per_100k:Q'],
     size='population:Q'
 )
-regression_line = alt.Chart(state_aggregates_global).transform_regression(
+regression_line = alt.Chart(scatterplot).transform_regression(
     'incidents_per_100k', 'per_100k'
 ).mark_line(color='red').encode(
     x='incidents_per_100k:Q',
