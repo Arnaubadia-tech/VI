@@ -25,26 +25,18 @@ povertydata = pd.read_csv('Q5.1dataset (1).csv')
 mentaldata = pd.read_csv('Q5.2dataset (2).csv')
 
 ## Mass Shootings per Capita by State (per 100k)
-state_bar_chart2 = alt.Chart(barchart).mark_bar().encode(
-    x=alt.X('per_100k:Q', title='Shootings per 100,000 Residents'),
-    y=alt.Y('State:N', title='State', sort='-x'),  
-    color=alt.Color('per_100k:Q', 
-                   scale=alt.Scale(scheme='reds'), 
-                   legend=alt.Legend(title='Shootings per 100k', 
-                                   orient='bottom',
-                                   titleFontSize=10,
-                                   labelFontSize=8,
-    legendX=0,
-    direction='horizontal',
-    padding=5))
+chart = alt.Chart(barchart).mark_bar().encode(
+    x=alt.X('Shootings_Density:Q', title='Shootings per 100,000 Residents'),
+    y=alt.Y('State:N', title='State', sort='-x'),
+    color=alt.Color('Shootings_Density:Q', scale=alt.Scale(scheme='reds'), legend=alt.Legend(title='Shootings per 100k'))
 ).properties(
     title=alt.TitleParams(
         text='Mass Shootings per Capita by State',
-        fontSize=14,
+        fontSize=16,
         fontWeight='bold'
     ),
-    width=300,
-    height=400
+    width=600,
+    height=700
 )
 
 ## Mapa coroplético por estado
