@@ -92,7 +92,7 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
         "datum.Shootings_Density > 0",
         alt.Color(
             'Shootings_Density:Q',
-            scale=alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True),
+            scale=alt.Scale(scheme="reds", domain=[0, finalcounties['per_100k'].max()], clamp=True),
             title='Shootings per 100k',
             legend=alt.Legend(orient='bottom')  # Mover la leyenda debajo
         ),
