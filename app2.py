@@ -17,22 +17,10 @@ poverty = pd.read_csv('poverty.csv')
 mental = pd.read_csv('mental_ill.csv')
 finalcounties = pd.read_csv('finalcounties.csv')
 finalstates = pd.read_csv('Q2.1dataset (1).csv')
-
-# Preprocesamiento de datos
-counties_df = counties_df.rename(columns={'CTYNAME': 'County Names', 'STNAME': 'State'})
-counties2_df = counties_df[counties_df['COUNTY'] != 0]
-merged_df = pd.merge(data, counties2_df[['County Names', 'State', 'POPESTIMATE2023']], on=['County Names', 'State'], how='left')
-data = merged_df
-
-# Count per state
-state_aggregates = data.groupby('State').agg(
-    shooting_count=('id', 'count'),
-    population=('Population', 'first')
-).reset_index()
-state_aggregates['per_100k'] = (state_aggregates['shooting_count'] / state_aggregates['population']) * 100000
+barchart = pd.read_csv('Q1.dataset.csv')
 
 ## Mass Shootings per Capita by State (per 100k)
-state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
+state_bar_chart2 = alt.Chart(barchart).mark_bar().encode(
     x=alt.X('per_100k:Q', title='Shootings per 100,000 Residents'),
     y=alt.Y('State:N', title='State', sort='-x'),  
     color=alt.Color('per_100k:Q', 
@@ -54,8 +42,7 @@ state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
     height=400
 )
 
-# Mapa coroplético por estado
-
+## Mapa coroplético por estado
 states = alt.topo_feature(vega_data.us_10m.url, 'states')
 color_scale = alt.Scale(scheme="reds", domain=[0, finalstates['Shootings_Density'].max()], clamp=True)
 
