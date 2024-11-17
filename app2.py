@@ -61,24 +61,15 @@ color_scale = alt.Scale(scheme="reds", domain=[0, finalstates['Shootings_Density
 
 ## Gráfico choropleth para todos los Estados Unidos
 choropleth = alt.Chart(states).mark_geoshape().encode(
-    color=alt.Color('per_100k:Q', 
-                   title='Shootings per 100k', 
-                   scale=color_scale,
-                   legend=alt.Legend(orient='bottom',
-                                   titleFontSize=10,
-                                   labelFontSize=8)),
-    tooltip=['State:N', 'per_100k:Q']
+    color=alt.Color('Shootings_Density:Q', title='Shootings per 100k', scale=color_scale),
+    tooltip=['State:N', 'Shootings_Density:Q']
 ).transform_lookup(
     lookup='id',
-    from_=alt.LookupData(finalstates, 'id', ['State', 'per_100k'])
+    from_=alt.LookupData(finalstates, 'FIPS', ['State', 'Shootings_Density'])
 ).properties(
-    width=300,
-    height=400,
-    title=alt.TitleParams(
-        text="Mass Shootings Distribution by State",
-        fontSize=14,
-        fontWeight='bold'
-    )
+    width=800,
+    height=500,
+    title="Mass Shootings per 100,000 Residents by State in the US"
 ).project(
     type='albersUsa'
 )
