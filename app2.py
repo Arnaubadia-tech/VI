@@ -25,7 +25,7 @@ povertydata = pd.read_csv('Q5.1dataset (1).csv')
 mentaldata = pd.read_csv('Q5.2dataset (2).csv')
 
 ## Mass Shootings per Capita by State (per 100k)
-chart = alt.Chart(barchart).mark_bar().encode(
+state_bar_chart2 = alt.Chart(barchart).mark_bar().encode(
     x=alt.X('Shootings_Density:Q', title='Shootings per 100,000 Residents'),
     y=alt.Y('State:N', title='State', sort='-x'),
     color=alt.Color('Shootings_Density:Q', scale=alt.Scale(scheme='reds'), legend=alt.Legend(title='Shootings per 100k'))
