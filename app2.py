@@ -113,17 +113,22 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
 
 # Gráfico de dispersión de incidentes escolares y tiroteos
 
-scatter_plot = alt.Chart(scatterplot).mark_point(filled=True).encode(
-    x=alt.X('incidents_per_100k:Q', title='School Incidents per 100k'),
-    y=alt.Y('per_100k:Q', title='School Shootings per 100k'),
-    tooltip=['State:N', 'incidents_per_100k:Q', 'per_100k:Q'],
+scatter_plot = alt.Chart(scatterplot).mark_point(filled=True,opacity=0.6).encode(
+    x=alt.X('Incidents_Density:Q', title='School Incidents per 100k'),
+    y=alt.Y('Shootings_Density:Q', title='Mass Shootings per 100k'),
+    tooltip=['State:N', 'Incidents_Density:Q', 'Shootings_Density:Q'],
     size='population:Q'
+).properties(
+    title="School Incidents vs. School Shootings per 100,000 Residents by State",
+    width=800,
+    height=600
 )
+
 regression_line = alt.Chart(scatterplot).transform_regression(
-    'incidents_per_100k', 'per_100k'
+    'Incidents_Density', 'Shootings_Density'
 ).mark_line(color='red').encode(
-    x='incidents_per_100k:Q',
-    y='per_100k:Q'
+    x='Incidents_Density:Q',
+    y='Shootings_Density:Q'
 )
 
 final_plot = (scatter_plot + regression_line).properties(
