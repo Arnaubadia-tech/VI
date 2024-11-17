@@ -182,18 +182,18 @@ final_chart = (trend_chart + median_rule ).properties(
 
 ##Extra graphs
 #Poverty
-scatter_plot2 = alt.Chart(povertydata).mark_point(filled=True).encode(
+scatter_plot2 = alt.Chart(povertydata).mark_point(filled=True, opacity=0.7).encode(
     x=alt.X('PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', title='Poverty Rate (%)',scale=alt.Scale(zero=False)),
-    y=alt.Y('per_100k:Q', title='School Shootings per 100k'),
-    tooltip=['State:N', 'PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', 'per_100k:Q'],
+    y=alt.Y('Shootings_Density:Q', title='Mass Shootings per 100k'),
+    tooltip=['State:N', 'PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', 'Shootings_Density:Q'],
     size='population:Q'
 )
-# Regression line
+
 regression_line2 = alt.Chart(povertydata).transform_regression(
-    'PovertyRatesPercentOfPopulationBelowPovertyLevel', 'per_100k'
+    'PovertyRatesPercentOfPopulationBelowPovertyLevel', 'Shootings_Density'
 ).mark_line(color='red').encode(
     x='PovertyRatesPercentOfPopulationBelowPovertyLevel:Q',
-    y='per_100k:Q'
+    y='Shootings_Density:Q'
 )
 
 final_plot2 = (scatter_plot2 + regression_line2).properties(
@@ -211,18 +211,18 @@ final_plot2 = (scatter_plot2 + regression_line2).properties(
 )
 
 ## Mental illness
-scatter_plot3 = alt.Chart(mentaldata).mark_point(filled=True).encode(
-    x=alt.X('MentalHealthStatisticsRatesOfMentalIllness:Q', title='Mental Illness (%)',scale=alt.Scale(zero=False)),
-    y=alt.Y('per_100k:Q', title='Mass Shootings per 100k'),
-    tooltip=['State:N', 'MentalHealthStatisticsRatesOfMentalIllness:Q', 'per_100k:Q'],
+scatter_plot3 = alt.Chart(mentaldata).mark_point(filled=True, opacity=0.7).encode(
+    x=alt.X('MentalHealthStatisticsRatesOfMentalIllness:Q', title='Mental Illness(%)',scale=alt.Scale(zero=False)),
+    y=alt.Y('Shootings_Density:Q', title='Mass Shootings per 100k'),
+    tooltip=['State:N', 'MentalHealthStatisticsRatesOfMentalIllness:Q', 'Shootings_Density:Q'],
     size='population:Q'
 )
-# Regression line
+
 regression_line3 = alt.Chart(mentaldata).transform_regression(
-    'MentalHealthStatisticsRatesOfMentalIllness', 'per_100k'
+    'MentalHealthStatisticsRatesOfMentalIllness', 'Shootings_Density'
 ).mark_line(color='red').encode(
     x='MentalHealthStatisticsRatesOfMentalIllness:Q',
-    y='per_100k:Q'
+    y='Shootings_Density:Q'
 )
 
 final_plot3 = (scatter_plot3 + regression_line3).properties(
