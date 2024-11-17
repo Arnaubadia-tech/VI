@@ -1,4 +1,4 @@
-import streamlit as st
+zimport streamlit as st
 import pandas as pd
 import altair as alt
 from vega_datasets import data as vega_data
@@ -91,7 +91,7 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
    color=alt.condition(
         "datum.Shootings_Density > 0",
         alt.Color('Shootings_Density:Q', scale=color_scale, title='Shootings per 100k'),
-        alt.value('#F5F5F5')  # Grey for zero shootings
+        alt.value('#F5F5F5')  
     ),
     tooltip=['county_name:N', 'state_name:N', 'Shootings_Density:Q']
 ).transform_lookup(
@@ -107,7 +107,12 @@ county_choropleth = alt.Chart(counties).mark_geoshape().encode(
     )
 ).project(
     type='albersUsa'
+).configure_legend(
+    orient='bottom',
+    titleFontSize=10,
+    labelFontSize=8
 )
+
 
 
 # Gráfico de dispersión de incidentes escolares y tiroteos
