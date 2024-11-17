@@ -203,7 +203,7 @@ monthly_counts = monthly_counts.merge(
 # Monthly
 trend_chart = alt.Chart(monthly_counts).mark_line().encode(
     x=alt.X('Year_Month:T', title='Year-Month'),
-    y=alt.Y('count:Q', title='Number of Incidents'),
+    y=alt.Y('count:Q', title='Number of incidents per month-year & Median per year'),
     tooltip=['Year_Month:T', 'count:Q']
 )
 
