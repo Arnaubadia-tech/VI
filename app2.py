@@ -17,7 +17,7 @@ poverty = pd.read_csv('poverty.csv')
 mental = pd.read_csv('mental_ill.csv')
 finalcounties = pd.read_csv('finalcounties.csv')
 finalstates = pd.read_csv('Q2.1dataset (1).csv')
-barchart = pd.read_csv('Q1.dataset.csv')
+barchart = pd.read_csv('Q1dataset.csv')
 
 ## Mass Shootings per Capita by State (per 100k)
 state_bar_chart2 = alt.Chart(barchart).mark_bar().encode(
