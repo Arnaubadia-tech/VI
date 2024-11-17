@@ -19,6 +19,9 @@ finalcounties = pd.read_csv('finalcounties.csv')
 finalstates = pd.read_csv('Q2.1dataset (1).csv')
 barchart = pd.read_csv('Q1dataset.csv')
 scatterplot = pd.read_csv('Q3.2dataset.csv')
+comparison = pd.read_csv('Q4dataset.csv')
+povertydata = pd.read_csv('Q5.1dataset.csv')
+mentaldata = pd.read_csv('Q5.2dataset.csv')
 
 ## Mass Shootings per Capita by State (per 100k)
 state_bar_chart2 = alt.Chart(barchart).mark_bar().encode(
@@ -138,31 +141,14 @@ final_plot = (scatter_plot + regression_line).properties(
 
 
 ## Line chart evolución
-data['Incident Date'] = pd.to_datetime(data['Incident Date'])
-data['Years'] = data['Incident Date'].dt.year
-data['Year_Month'] = data['Incident Date'].dt.to_period('M').astype(str)
-
-monthly_counts = data.groupby('Year_Month').size().reset_index(name='count')
-
-yearly_median = monthly_counts.copy()
-yearly_median['Years'] = pd.to_datetime(yearly_median['Year_Month']).dt.year
-median_per_year = yearly_median.groupby('Years')['count'].median().reset_index(name='yearly_median')
-
-monthly_counts = monthly_counts.merge(
-    median_per_year,
-    left_on=pd.to_datetime(monthly_counts['Year_Month']).dt.year,
-    right_on='Years',
-    how='left'
-)
-# Monthly
-trend_chart = alt.Chart(monthly_counts).mark_line().encode(
+trend_chart = alt.Chart(comparison).mark_line().encode(
     x=alt.X('Year_Month:T', title='Year-Month'),
     y=alt.Y('count:Q', title='Number of incidents & Median per year'),
     tooltip=['Year_Month:T', 'count:Q']
 )
 
 # Línea de mediana anual en color rojo
-median_rule = alt.Chart(monthly_counts).mark_line(color='red').encode(
+median_rule = alt.Chart(comparison).mark_line(color='red').encode(
     x=alt.X('Year_Month:T'),
     y=alt.Y('yearly_median:Q'),
     detail='Years:N' 
@@ -198,23 +184,14 @@ final_chart = (trend_chart + median_rule ).properties(
 
 ##Extra graphs
 #Poverty
-poverty = pd.read_csv('poverty.csv')
-poverty = poverty.rename(columns={'state': 'State'})
-
-#Merge with data, adding rate
-poverty = pd.merge(data, poverty[['State', 'PovertyRatesPercentOfPopulationBelowPovertyLevel']], on='State', how='left')
-# Add state aggregates
-merged_poverty = pd.merge(poverty, state_aggregates, on='State')
-
-# Graph
-scatter_plot2 = alt.Chart(merged_poverty).mark_point(filled=True).encode(
+scatter_plot2 = alt.Chart(povertydata).mark_point(filled=True).encode(
     x=alt.X('PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', title='Poverty Rate (%)',scale=alt.Scale(zero=False)),
     y=alt.Y('per_100k:Q', title='School Shootings per 100k'),
     tooltip=['State:N', 'PovertyRatesPercentOfPopulationBelowPovertyLevel:Q', 'per_100k:Q'],
     size='population:Q'
 )
 # Regression line
-regression_line2 = alt.Chart(merged_poverty).transform_regression(
+regression_line2 = alt.Chart(povertydata).transform_regression(
     'PovertyRatesPercentOfPopulationBelowPovertyLevel', 'per_100k'
 ).mark_line(color='red').encode(
     x='PovertyRatesPercentOfPopulationBelowPovertyLevel:Q',
@@ -236,22 +213,14 @@ final_plot2 = (scatter_plot2 + regression_line2).properties(
 )
 
 ## Mental illness
-mental = pd.read_csv('mental_ill.csv')
-mental = mental.rename(columns={'state': 'State'})
-# Fusionar los datos de enfermedades mentales con el dataset principal data
-mental = pd.merge(data, mental[['State', 'MentalHealthStatisticsRatesOfMentalIllness']], on='State', how='left')
-# Add state aggregate
-merged_mental = pd.merge(mental, state_aggregates, on='State')
-
-# Crear el gráfico de dispersión
-scatter_plot3 = alt.Chart(merged_mental).mark_point(filled=True).encode(
+scatter_plot3 = alt.Chart(mentaldata).mark_point(filled=True).encode(
     x=alt.X('MentalHealthStatisticsRatesOfMentalIllness:Q', title='Mental Illness (%)',scale=alt.Scale(zero=False)),
     y=alt.Y('per_100k:Q', title='Mass Shootings per 100k'),
     tooltip=['State:N', 'MentalHealthStatisticsRatesOfMentalIllness:Q', 'per_100k:Q'],
     size='population:Q'
 )
 # Regression line
-regression_line3 = alt.Chart(merged_mental).transform_regression(
+regression_line3 = alt.Chart(mentaldata).transform_regression(
     'MentalHealthStatisticsRatesOfMentalIllness', 'per_100k'
 ).mark_line(color='red').encode(
     x='MentalHealthStatisticsRatesOfMentalIllness:Q',
@@ -272,9 +241,9 @@ final_plot3 = (scatter_plot3 + regression_line3).properties(
     orient='bottom'
 )
 
-# Display layout
-st.markdown("<h1 style='text-align: center;'>Mass Shootings in the US</h1>", unsafe_allow_html=True)
 
+## Display layout
+st.markdown("<h1 style='text-align: center;'>Mass Shootings in the US</h1>", unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3)
 
