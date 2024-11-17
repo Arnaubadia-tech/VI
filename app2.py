@@ -71,8 +71,8 @@ choropleth = alt.Chart(states).mark_geoshape().encode(
     lookup='id',
     from_=alt.LookupData(finalstates, 'FIPS', ['State', 'Shootings_Density'])
 ).properties(
-    width=800,
-    height=500,
+    width=300,
+    height=400,
     title=alt.TitleParams(
         text="Mass Shootings per 100,000 Residents by State in the US",
         fontSize=14,
