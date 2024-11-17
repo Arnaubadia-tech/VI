@@ -16,7 +16,7 @@ school_df = pd.read_csv('school.csv')
 poverty = pd.read_csv('poverty.csv')
 mental = pd.read_csv('mental_ill.csv')
 finalcounties = pd.read_csv('finalcounties.csv')
-finalstates = pd.read_csv('Q2.1dataset.csv')
+finalstates = pd.read_csv('Q2.1dataset (1).csv')
 
 # Preprocesamiento de datos
 counties_df = counties_df.rename(columns={'CTYNAME': 'County Names', 'STNAME': 'State'})
