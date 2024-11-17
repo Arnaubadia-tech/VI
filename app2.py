@@ -10,13 +10,6 @@ st.set_page_config(
 )
 
 # Cargar datos
-data = pd.read_csv('VIProjectMassShoting-csv2.csv')
-counties_df = pd.read_csv('co-est2023-alldata.csv', encoding='latin1')
-school_df = pd.read_csv('school.csv')
-poverty = pd.read_csv('poverty.csv')
-mental = pd.read_csv('mental_ill.csv')
-finalcounties = pd.read_csv('finalcounties.csv')
-
 finalstates = pd.read_csv('Q2.1dataset.csv')
 barchart = pd.read_csv('Q1dataset (3).csv')
 scatterplot = pd.read_csv('Q3.2dataset.csv')
