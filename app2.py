@@ -35,8 +35,8 @@ state_bar_chart2 = alt.Chart(barchart).mark_bar().encode(
         fontSize=16,
         fontWeight='bold'
     ),
-    width=600,
-    height=700
+    width=300,
+    height=400
 )
 
 ## Mapa coroplético por estado
