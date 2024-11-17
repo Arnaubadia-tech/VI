@@ -6,7 +6,7 @@ from vega_datasets import data as vega_data
 st.set_page_config(
     page_title="VI Project", 
     layout="wide",
-    initial_sidebar_state="expanded"  
+    initial_sidebar_state="expanded" 
 )
 
 # Cargar datos
