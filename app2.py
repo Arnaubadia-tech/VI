@@ -95,27 +95,7 @@ choropleth = alt.Chart(states).mark_geoshape().encode(
     type='albersUsa'
 )
 
-## Counties preprocessing
-## not necessary, done in collab, see finalcounties
-county_aggregates = data.groupby(['FIPS', 'County Names', 'State']).agg(
-    shooting_count=('id', 'count'),            # Cuenta de tiroteos en cada condado
-    population=('POPESTIMATE2023', 'first')    # Población estimada en 2023, seleccionando el primer valor
-).reset_index()
-
-county_aggregates['per_100k'] = (county_aggregates['shooting_count'] / county_aggregates['population']) * 100000
-
-counties_full = pd.DataFrame({
-    'FIPS': [int(f['id']) for f in vega_data.us_10m()['objects']['counties']['geometries']]
-})
-
-complete_data = counties_full.merge(county_aggregates, on='FIPS', how='left').fillna({
-    'shooting_count': 0,      # Establece en 0 si no hay tiroteos reportados
-    'population': 1,          # Establece en 1 para evitar divisiones por cero
-    'per_100k': 0             # Establece en 0 para los condados sin tiroteos
-})
-
-#color_scale = alt.Scale(scheme="reds", domain=[0, county_aggregates['per_100k'].max()], clamp=True)
-
+## Counties
 # County geometry
 counties = alt.topo_feature(vega_data.us_10m.url, 'counties')
 
