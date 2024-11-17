@@ -57,6 +57,7 @@ state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
 # Mapa coroplético por estado
 
 states = alt.topo_feature(vega_data.us_10m.url, 'states')
+color_scale = alt.Scale(scheme="reds", domain=[0, finalstates['Shootings_Density'].max()], clamp=True)
 
 ## Gráfico choropleth para todos los Estados Unidos
 choropleth = alt.Chart(states).mark_geoshape().encode(
