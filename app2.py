@@ -16,6 +16,7 @@ school_df = pd.read_csv('school.csv')
 poverty = pd.read_csv('poverty.csv')
 mental = pd.read_csv('mental_ill.csv')
 finalcounties = pd.read_csv('finalcounties.csv')
+finalstates = pd.read_csv('Q2.1dataset.csv')
 
 # Preprocesamiento de datos
 counties_df = counties_df.rename(columns={'CTYNAME': 'County Names', 'STNAME': 'State'})
@@ -54,22 +55,8 @@ state_bar_chart2 = alt.Chart(state_aggregates).mark_bar().encode(
 )
 
 # Mapa coroplético por estado
-#vega_data.us_10m.url = https://raw.githubusercontent.com/vega/vega-datasets/master/data/us-10m.json
-states = alt.topo_feature(vega_data.us_10m.url, 'states')
-state_fips = pd.DataFrame({
-    'State': ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'District of Columbia',
-              'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
-              'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
-              'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico',
-              'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania',
-              'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-              'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'],
-    'id': [1, 2, 4, 5, 6, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-           30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 44, 45, 46, 47, 48, 49, 50, 51, 53, 54, 55, 56]
-})
-state_aggregates = state_aggregates.merge(state_fips, on='State', how='left')
 
-color_scale = alt.Scale(scheme="reds", domain=[0, state_aggregates['per_100k'].max()], clamp=True)
+states = alt.topo_feature(vega_data.us_10m.url, 'states')
 
 ## Gráfico choropleth para todos los Estados Unidos
 choropleth = alt.Chart(states).mark_geoshape().encode(
@@ -82,7 +69,7 @@ choropleth = alt.Chart(states).mark_geoshape().encode(
     tooltip=['State:N', 'per_100k:Q']
 ).transform_lookup(
     lookup='id',
-    from_=alt.LookupData(state_aggregates, 'id', ['State', 'per_100k'])
+    from_=alt.LookupData(finalstates, 'id', ['State', 'per_100k'])
 ).properties(
     width=300,
     height=400,
