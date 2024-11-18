@@ -10,13 +10,13 @@ st.set_page_config(
 )
 
 # Cargar datos
-barchart = pd.read_csv('Q1dataset (3).csv')
+barchart = pd.read_csv('Q1dataset.csv')
 finalstates = pd.read_csv('Q2.1dataset.csv')
-finalcounties = pd.read_csv('finalcounties.csv')
+finalcounties = pd.read_csv('Q2.2dataset.csv')
 scatterplot = pd.read_csv('Q3.2dataset.csv')
 comparison = pd.read_csv('Q4dataset.csv')
-povertydata = pd.read_csv('Q5.1dataset (1).csv')
-mentaldata = pd.read_csv('Q5.2dataset (2).csv')
+povertydata = pd.read_csv('Q5.1dataset.csv')
+mentaldata = pd.read_csv('Q5.2dataset.csv')
 
 ## Mass Shootings per Capita by State (per 100k)
 state_bar_chart2 = alt.Chart(barchart).mark_bar().encode(
